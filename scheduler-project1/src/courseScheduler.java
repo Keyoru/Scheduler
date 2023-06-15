@@ -6,7 +6,7 @@ public class courseScheduler {
     int days = 5; 
     int timeslots = 6;
 
-    LinkedList<String>[][] array = new LinkedList[timeslots][days];
+    LinkedList<String>[][] schedule = new LinkedList[timeslots][days];
     
 
     public void addCourse(course c){
@@ -17,7 +17,10 @@ public class courseScheduler {
 
             for (String slot : courseSlots) {
                 int slotIndex = getSlotIndex(slot);
-                schedule[dayIndex][slotIndex] = course.getCourseID();
+                
+                
+                //add conditions here
+                schedule[slotIndex][dayIndex].add(c.courseID);
             }
         }
 
