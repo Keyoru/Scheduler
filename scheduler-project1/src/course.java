@@ -11,7 +11,6 @@ public class course {
     LinkedList<String> instructorDays;
     String instructorHours; //format for example
                             //8:00 / 9:30 
-
     LinkedList<String> conflictingCourses;
 
     public course(String ID, int creds, int sections, int sessions, String instname, LinkedList<String> instdays, String insthours, LinkedList<String> conflicts){
@@ -24,4 +23,8 @@ public class course {
         instructorHours = insthours;
         conflictingCourses = conflicts;
     }
+
+    
+
+
 }
