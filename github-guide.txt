@@ -1,0 +1,12 @@
+first run
+> git clone https://github.com/Keyoru/Scheduler.git
+this will download the repo to wherever you have cded into your terminal
+then run 
+> code Scheduler
+this will open the the new repo folder in vscode
+vscode should ask if you wanna open the repository or something at this stage.
+
+https://zeroesandones.medium.com/how-to-commit-and-push-your-changes-to-your-github-repository-in-vscode-77a7a3d7dd02
+
+follow this guide and try to make a text file in the root repo and push it to the remote repo
+dont forget to add commit messages
