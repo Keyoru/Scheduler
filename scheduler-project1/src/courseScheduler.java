@@ -6,31 +6,58 @@ public class courseScheduler {
     int days = 5; 
     int timeslots = 6;
 
-    LinkedList<String>[][] schedule = new LinkedList[timeslots][days];
+    LinkedList<String>[][] schedule = new LinkedList[days][timeslots];
     
 
-    public void addCourse(course c){
+    courseScheduler(){
 
-        for(String day:c.instructorDays){
-            int dayIndex = getDayIndex(day);
-            LinkedList<String> courseSlots = convertHourstoSlots(c.instructorHours);
-
-            for (String slot : courseSlots) {
-                int slotIndex = getSlotIndex(slot);
-                
-                
-                //add conditions here
-                schedule[slotIndex][dayIndex].add(c.courseID);
+        for(int i = 0;i < days;i++){
+            for(int j = 0; j < timeslots; j++){
+                schedule[i][j] = new LinkedList<String>();
             }
         }
 
     }
 
+    public void addCourse(course c){
+
+        
+        for(String day:c.instructorDays){
+            int dayIndex = getDayIndex(day);
+            LinkedList<String> timeslotshour = convertHourstoSlots(c.instructorHours);
+            int index1 = getSlotIndex(timeslotshour.get(0));
+            int index2 = getSlotIndex(timeslotshour.get(1));
+
+            for(int i = index1;i < index2;i++){
+                for(String conflict:c.conflictingCourses){
+                    if(schedule[dayIndex][i].contains(conflict)){
+                        System.out.println("conflict found");
+                        continue;
+                    }   
+                }
+                schedule[dayIndex][i].add(c.courseID);
+            }
+
+        }
+        // for(String day:c.instructorDays){
+        //     int dayIndex = getDayIndex(day);
+        //     LinkedList<String> courseSlots = convertHourstoSlots(c.instructorHours);
+
+        //     for (String slot : courseSlots) {
+        //         int slotIndex = getSlotIndex(slot);
+                
+                
+        //         //add conditions here
+        //         schedule[slotIndex][dayIndex].add(c.courseID);
+        //     }
+        // }
+
+    }
 
  
 
     //convert day string to index to use in 2d array
-    public int getDayIndex(String day) {
+    private int getDayIndex(String day) {
         switch (day) {
             case "Monday":
                 return 0;
@@ -48,14 +75,30 @@ public class courseScheduler {
     }
 
     //convert hours string to index
-    private int getSlotIndex(String slot) {
+    private int getSlotIndex(String hour) {
 
+        switch(hour){
+            case "8:00":
+                return 0;
+            case "9:30":
+                return 1;
+            case "11:00":
+                return 2;
+            case "1:00":
+                return 3;
+            case "2:30":   
+                return 4;
+            case "4:00":
+                return 5;
+            case "5:15":
+                return 6;
+            default:
+            return -1;
+            }
 
-
-        return -1;
     }
 
-    public LinkedList<String> convertHourstoSlots(String instructorHours){
+    private LinkedList<String> convertHourstoSlots(String instructorHours){
         LinkedList<String> slots = new LinkedList<>();
         String[] hours = instructorHours.split("/");
 
@@ -64,6 +107,17 @@ public class courseScheduler {
         }
 
         return slots;
+    }
+
+    public void displaySchedule(){
+    
+        for(int i = 0; i < days; i++){
+            for(int j = 0; j < timeslots; j++){
+                System.out.println(schedule[i][j].toString());
+            }   
+            System.out.println();
+        }
+    
     }
 
 }
