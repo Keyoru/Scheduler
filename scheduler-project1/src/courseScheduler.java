@@ -8,6 +8,8 @@ public class courseScheduler {
 
     LinkedList<String>[][] schedule = new LinkedList[days][timeslots];
     
+    //for courses with no place found to store them
+    LinkedList<course> unscheduledCourseHeap = new LinkedList<>();
 
     courseScheduler(){
         for(int i = 0;i < days;i++){
@@ -17,39 +19,79 @@ public class courseScheduler {
         }
 
     }
+
     public void addCourse(course c) {
+    addCourse(c, false);
+    }
+    //day spread is for spreading the sessions
+    //across all available days if possible
+
+    public void addCourse(course c, boolean ignoreDaySpread) {
+        boolean courseUnscheduled = true;
+    
+        int sessionsPerDay = c.numberofSessions / c.instructorDays.size();
+    
+        if(c.numberofSessions == 0){
+            System.out.println(c.courseID + " reached 0 sessions");
+            return;
+        }
+    
         for (String day : c.instructorDays) {
+            int sessionsScheduled = 0;
             int dayIndex = getDayIndex(day);
             LinkedList<String> timeslotshour = convertHourstoSlots(c.instructorHours);
-            
+    
             // Start of instructor's available time (convert string --> int index)
             int index1 = getSlotIndex(timeslotshour.get(0));
             // End of instructor's available time (convert string --> int index)
             int index2 = getSlotIndex(timeslotshour.get(1));
     
             boolean conflictFlag = false;
-            
             for (int i = index1; i < index2; i++) {
                 for (String conflict : c.conflictingCourses) {
                     if (schedule[dayIndex][i].contains(conflict)) {
                         System.out.println(c.courseID + " conflict found with " + conflict);
                         conflictFlag = true;
-                        break; 
+                        break;
                     }
                 }
-                
+    
                 if (conflictFlag) {
+                    conflictFlag = false;
+                    continue;
+                }
+    
+                if (sessionsScheduled == sessionsPerDay && !ignoreDaySpread) {
                     break;
                 }
-                
-                schedule[dayIndex][i].add(c.courseID); 
+
+                if(c.numberofSessions == 0){
+                    break;
+                }
+                schedule[dayIndex][i].add(c.courseID);
+                c.numberofSessions--;
+                sessionsScheduled++;
+    
+                courseUnscheduled = false; 
             }
+            if (c.numberofSessions <= 0) {
+                break;
+            }
+        } 
+
+        if (c.numberofSessions > 0 && courseUnscheduled){
+            addCourse(c, true);
         }
+
+        
+        if (courseUnscheduled) {
+            unscheduledCourseHeap.add(c);
+        }
+
     }
     
 
- 
-
+    
     //convert day string to index to use in 2d array
     private int getDayIndex(String day) {
         switch (day) {
@@ -110,6 +152,11 @@ public class courseScheduler {
                 System.out.print(schedule[i][j].toString());
             }   
             System.out.println();
+        }
+
+        System.out.println("\nUnscheduled courses remaining: ");
+        for(course c: unscheduledCourseHeap){
+            System.out.println(c.courseID);
         }
     
     }

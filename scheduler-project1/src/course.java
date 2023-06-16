@@ -24,7 +24,7 @@ public class course {
         conflictingCourses = conflicts;
     }
 
-    
+
 
 
 }
