@@ -25,7 +25,10 @@ public class courseScheduler {
         for(String day:c.instructorDays){
             int dayIndex = getDayIndex(day);
             LinkedList<String> timeslotshour = convertHourstoSlots(c.instructorHours);
+            
+            //start of instructor's available time (convert string --> int index)
             int index1 = getSlotIndex(timeslotshour.get(0));
+            //end of instructor's available time (convert string --> int index)
             int index2 = getSlotIndex(timeslotshour.get(1));
 
             for(int i = index1;i < index2;i++){
@@ -39,18 +42,6 @@ public class courseScheduler {
             }
 
         }
-        // for(String day:c.instructorDays){
-        //     int dayIndex = getDayIndex(day);
-        //     LinkedList<String> courseSlots = convertHourstoSlots(c.instructorHours);
-
-        //     for (String slot : courseSlots) {
-        //         int slotIndex = getSlotIndex(slot);
-                
-                
-        //         //add conditions here
-        //         schedule[slotIndex][dayIndex].add(c.courseID);
-        //     }
-        // }
 
     }
 
