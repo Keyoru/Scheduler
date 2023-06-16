@@ -17,32 +17,36 @@ public class courseScheduler {
         }
 
     }
-
-    public void addCourse(course c){
-
-        
-        for(String day:c.instructorDays){
+    public void addCourse(course c) {
+        for (String day : c.instructorDays) {
             int dayIndex = getDayIndex(day);
             LinkedList<String> timeslotshour = convertHourstoSlots(c.instructorHours);
             
-            //start of instructor's available time (convert string --> int index)
+            // Start of instructor's available time (convert string --> int index)
             int index1 = getSlotIndex(timeslotshour.get(0));
-            //end of instructor's available time (convert string --> int index)
+            // End of instructor's available time (convert string --> int index)
             int index2 = getSlotIndex(timeslotshour.get(1));
-
-            for(int i = index1;i < index2;i++){
-                for(String conflict:c.conflictingCourses){
-                    if(schedule[dayIndex][i].contains(conflict)){
-                        System.out.println("conflict found");
-                        continue;
-                    }   
+    
+            boolean conflictFlag = false;
+            
+            for (int i = index1; i < index2; i++) {
+                for (String conflict : c.conflictingCourses) {
+                    if (schedule[dayIndex][i].contains(conflict)) {
+                        System.out.println(c.courseID + " conflict found with " + conflict);
+                        conflictFlag = true;
+                        break; 
+                    }
                 }
-                schedule[dayIndex][i].add(c.courseID);
+                
+                if (conflictFlag) {
+                    break;
+                }
+                
+                schedule[dayIndex][i].add(c.courseID); 
             }
-
         }
-
     }
+    
 
  
 
