@@ -10,7 +10,6 @@ public class courseScheduler {
     
 
     courseScheduler(){
-
         for(int i = 0;i < days;i++){
             for(int j = 0; j < timeslots; j++){
                 schedule[i][j] = new LinkedList<String>();
@@ -104,7 +103,7 @@ public class courseScheduler {
     
         for(int i = 0; i < days; i++){
             for(int j = 0; j < timeslots; j++){
-                System.out.println(schedule[i][j].toString());
+                System.out.print(schedule[i][j].toString());
             }   
             System.out.println();
         }
