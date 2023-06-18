@@ -119,6 +119,8 @@ public class courseScheduler {
             unscheduledCourseHeap.add(c);
         }
     }
+
+
     
     private int getLastScheduledIndex(LinkedList<String>[] slots) {
         int lastScheduledIndex = -1;

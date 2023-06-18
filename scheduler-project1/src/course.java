@@ -13,7 +13,7 @@ public class course {
                             //8:00 / 9:30 
     LinkedList<String> conflictingCourses;
 
-    public course(String ID, int creds, int sections, int sessions, String instname, LinkedList<String> instdays, String insthours, LinkedList<String> conflicts){
+    course(String ID, int creds, int sections, int sessions, String instname, LinkedList<String> instdays, String insthours, LinkedList<String> conflicts){
         courseID = ID;
         numberOfCredits = creds;
         numberOfSections = sections;
