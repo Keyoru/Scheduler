@@ -39,13 +39,7 @@ public class courseScheduler {
     
             boolean conflictFlag = false;
             for (int i = index1; i < index2; i++) {
-                for (String conflict : c.conflictingCourses) {
-                    if (schedule[dayIndex][i].contains(conflict)) {
-                        System.out.println(c.courseID + " conflict found with " + conflict);
-                        conflictFlag = true;
-                        break;
-                    }
-                }
+                conflictFlag = checkConflictinSlot(c.conflictingCourses, schedule[dayIndex][i]);
     
                 if (conflictFlag) {
                     conflictFlag = false;
@@ -100,13 +94,7 @@ public class courseScheduler {
     
             boolean conflictFlag = false;
             for (int i = lastScheduledIndex + 1; i < index2; i++) {
-                for (String conflict : c.conflictingCourses) {
-                    if (schedule[dayIndex][i].contains(conflict)) {
-                        System.out.println(c.courseID + " conflict found with " + conflict);
-                        conflictFlag = true;
-                        break;
-                    }
-                }
+                conflictFlag = checkConflictinSlot(c.conflictingCourses, schedule[dayIndex][i]);
     
                 if (conflictFlag) {
                     conflictFlag = false;
@@ -186,7 +174,7 @@ public class courseScheduler {
             case "5:15":
                 return 6;
             default:
-            return -1;
+            throw new IllegalArgumentException("Invalid hour: " + hour);
             }
 
     }
@@ -200,6 +188,16 @@ public class courseScheduler {
         }
 
         return slots;
+    }
+
+    private boolean checkConflictinSlot(LinkedList<String> conflictsList, LinkedList<String> slotList){
+        for (String conflict : conflictsList) {
+            if (slotList.contains(conflict)) {
+                return true;
+            }
+        }
+        return false;
+
     }
 
     public void displaySchedule(){
