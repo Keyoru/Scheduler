@@ -39,8 +39,8 @@ public class courseScheduler {
     
             boolean conflictFlag = false;
             for (int i = index1; i < index2; i++) {
+                
                 conflictFlag = checkConflictinSlot(c.conflictingCourses, schedule[dayIndex][i]);
-    
                 if (conflictFlag) {
                     conflictFlag = false;
                     continue;
@@ -107,7 +107,7 @@ public class courseScheduler {
                 schedule[dayIndex][i].add(c.courseID);
                 c.numberofSessions--;
     
-                lastScheduledIndex = i; // Update the last scheduled timeslot index
+                lastScheduledIndex = i;
     
                 courseUnscheduled = false;
             }
