@@ -6,7 +6,7 @@ public class course {
     int numberOfCredits;
     int numberOfSections;
     int numberofSessions;   //per week
-
+    
     String instructorName;
     LinkedList<String> instructorDays;
     String instructorHours; //format for example
