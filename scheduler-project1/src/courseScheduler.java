@@ -3,6 +3,8 @@ import java.util.LinkedList;
 public class courseScheduler {
 
 
+    
+
     int days = 5; 
     int timeslots = 6;
 
