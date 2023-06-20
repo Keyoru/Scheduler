@@ -17,7 +17,8 @@ public class course {
     LinkedList<String> conflictingCourses;
 
     String courseType;
-    int nbOfSlots; //if course lecture length is 1:15 then 1 slot, 2 hours length is 2 slots etc etc
+    int nbOfSlots;   //number of slots a single lecture takes
+                     //if course lecture length is 1:15 then 1 slot, 2 hours length is 2 slots etc etc
 
     course(String ID, String name, int creds, int sections, int sessions, String instname,
      LinkedList<String> instdays, String insthours, LinkedList<String> conflicts

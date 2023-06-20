@@ -22,9 +22,31 @@ public class courseScheduler {
 
     }
 
-    public void addCourse(course c) {
+
+
+    public void addCourse(course course) {
  
+        if (course.numberofSessions <= 0) {
+            System.out.println(course.courseID + " has no sessions remaining.");
+            return;
+        }
+
+
+
     }
+
+    //day spread:
+    //adding will attempts to spread 
+    //lectures across all 
+    //available days if possible
+    private void addCourseWithoutSpread(course course) {
+
+        
+
+    }
+    
+
+
 
     private int getLastScheduledIndex(LinkedList<String>[] slots) {
         int lastScheduledIndex = -1;
