@@ -43,11 +43,11 @@ public class App {
                 "Type 6", 4);
 
         scheduler.addCourse(course1);
-        scheduler.addCourse(course2);
-        scheduler.addCourse(course3);
+        //scheduler.addCourse(course2);
+        //scheduler.addCourse(course3);
         scheduler.addCourse(course4);
-        scheduler.addCourse(course5);
-        scheduler.addCourse(course6);
+        //scheduler.addCourse(course5);
+        //scheduler.addCourse(course6);
 
         System.out.println();
         // Display the course schedule
