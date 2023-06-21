@@ -11,7 +11,7 @@ public class App {
         LinkedList<String> instructorDays1 = new LinkedList<>(List.of("Monday", "Wednesday"));
         LinkedList<String> conflictingCourses1 = new LinkedList<>(List.of("MTH202"));
         course course1 = new course("CSE101", "Course 1", 3, 1, 2,
-                "John Doe", instructorDays1, "8:00 / 17:15", conflictingCourses1,
+                "John Doe", instructorDays1, "08:00 / 17:15", conflictingCourses1,
                 "Type 1", 1);
 
         LinkedList<String> instructorDays2 = new LinkedList<>(List.of("Tuesday"));
@@ -23,7 +23,7 @@ public class App {
         LinkedList<String> instructorDays3 = new LinkedList<>(List.of("Friday"));
         LinkedList<String> conflictingCourses3 = new LinkedList<>(List.of("CSE101", "MTH202"));
         course course3 = new course("ENG101", "Course 3", 3, 1, 2,
-                "Sarah Johnson", instructorDays3, "9:30 / 12:15", conflictingCourses3,
+                "Sarah Johnson", instructorDays3, "09:30 / 12:15", conflictingCourses3,
                 "Type 3", 1);
 
         LinkedList<String> instructorDays4 = new LinkedList<>(List.of("Monday", "Wednesday"));
@@ -35,7 +35,7 @@ public class App {
         LinkedList<String> instructorDays5 = new LinkedList<>(List.of("Thursday", "Friday"));
         LinkedList<String> conflictingCourses5 = new LinkedList<>(List.of("MTH202"));
         course course5 = new course("BIO101", "Course 5", 3, 1, 2,
-                "Emily Davis", instructorDays5, "9:00 / 11:00", conflictingCourses5,
+                "Emily Davis", instructorDays5, "09:00 / 11:00", conflictingCourses5,
                 "Type 5", 1);
 
         LinkedList<String> instructorDays6 = new LinkedList<>(List.of("Monday", "Wednesday"));
@@ -46,11 +46,11 @@ public class App {
 
 
 
-        //scheduler.addCourse(course1);
-        //scheduler.addCourse(course2);
-        //scheduler.addCourse(course3);
+        scheduler.addCourse(course1);
+        scheduler.addCourse(course2);
+        scheduler.addCourse(course3);
         scheduler.addCourse(course4);
-        //scheduler.addCourse(course5);
+        scheduler.addCourse(course5);
         //scheduler.addCourse(course6);
         
         System.out.println();

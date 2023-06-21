@@ -64,11 +64,6 @@ public class courseScheduler {
 
 
     private void addCourseHelper(course course) {
- 
-        if (course.numberOfSessions <= 0) {
-            System.out.println(course.courseID + " has no sessions remaining.");
-            return;
-        }
 
         boolean courseUnscheduled = true;
         
@@ -99,7 +94,6 @@ public class courseScheduler {
                     }
                 }
             }
-
         }
     }
 
@@ -194,6 +188,7 @@ public class courseScheduler {
     // ISSUE: fix special cases, special time slots
     //convert hours string to index
     private int getSlotIndex(String hour) {
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         LocalTime inputTime = LocalTime.parse(hour, formatter);
 
@@ -212,13 +207,11 @@ public class courseScheduler {
             LocalTime.parse("16:00"),
             LocalTime.parse("17:15")
         };
-    
         for (int i = 0; i < slotTimes.length; i++) {
             if (inputTime.isBefore(slotTimes[i])) {
                 return i ;
             }
         }
-    
         return slotTimes.length - 1;
     }
 
