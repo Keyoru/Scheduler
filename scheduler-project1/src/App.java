@@ -24,11 +24,11 @@ public class App {
                 "Sarah Johnson", instructorDays3, "9:30 / 12:15", conflictingCourses3,
                 "Type 3", 1);
 
-        LinkedList<String> instructorDays4 = new LinkedList<>(List.of("Monday", "Wednesday", "Friday"));
+        LinkedList<String> instructorDays4 = new LinkedList<>(List.of("Monday", "Wednesday"));
         LinkedList<String> conflictingCourses4 = new LinkedList<>(List.of("CSE101", "MTH202"));
-        course course4 = new course("PHY201", "Course 4", 4, 2, 3,
+        course course4 = new course("PHY201", "Course 4", 4, 2, 2,
                 "Michael Brown", instructorDays4, "8:00 / 4:00", conflictingCourses4,
-                "Type 4", 2);
+                "Type 4", 1);
 
         LinkedList<String> instructorDays5 = new LinkedList<>(List.of("Tuesday", "Thursday"));
         LinkedList<String> conflictingCourses5 = new LinkedList<>(List.of("MTH202"));
@@ -42,11 +42,13 @@ public class App {
                 "David Wilson", instructorDays6, "1:00 / 2:30", conflictingCourses6,
                 "Type 6", 4);
 
+
+
         scheduler.addCourse(course1);
-        //scheduler.addCourse(course2);
-        //scheduler.addCourse(course3);
+        scheduler.addCourse(course2);
+        scheduler.addCourse(course3);
         scheduler.addCourse(course4);
-        //scheduler.addCourse(course5);
+        scheduler.addCourse(course5);
         //scheduler.addCourse(course6);
         
         System.out.println();

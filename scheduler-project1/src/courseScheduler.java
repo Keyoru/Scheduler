@@ -62,21 +62,30 @@ public class courseScheduler {
         
         // ISSUE:  case of < 1
         // day pairs: MON-WED   T-TH 
-        int sessionsPerDay = course.numberOfSessions / course.instructorDays.size();
 
         for(String day: course.instructorDays){
             int dayIndex = getDayIndex(day);
+            
+            LinkedList<String> timeslots = convertHourstoSlots(course.instructorHours);
 
-            LinkedList<String> timeslotshour = convertHourstoSlots(course.instructorHours);
-    
-            // Start of instructor's available time (convert string --> int index)
-            int index1 = getSlotIndex(timeslotshour.get(0));
-            // End of instructor's available time (convert string --> int index)
-            int index2 = getSlotIndex(timeslotshour.get(1));
+            int startIndex = getSlotIndex(timeslots.getFirst());
+            int endIndex = getSlotIndex(timeslots.getLast());
 
-            for(int i = index1; i <= index2 ; i++){
-                
+            int sessionsPerDay = course.numberOfSessions / course.instructorDays.size();
+            int sessionsScheduled = 0;
 
+            for(int i = startIndex; i <= endIndex && sessionsScheduled < sessionsPerDay; i++){
+                if (isSlotAvailable(course, dayIndex, i)) {
+                    if (course.nbOfSlots > 1) {
+                        if (areSlotsAvailable(course.conflictingCourses,dayIndex, i,  i + course.nbOfSlots)) {
+                            scheduleCourseInSlots(course.courseID, dayIndex, startIndex, i + course.nbOfSlots);
+                            sessionsScheduled++;
+                        }
+                    } else {
+                        scheduleCourseInSlot(course.courseID, dayIndex, i);
+                        sessionsScheduled++;
+                    }
+                }
             }
 
         }
@@ -92,20 +101,47 @@ public class courseScheduler {
         
 
     }
+
+
+    private void scheduleCourseInSlot(String courseID, int dayIndex, int slotIndex){
+        schedule[dayIndex][slotIndex].add(courseID);
+    }
     
+    private void scheduleCourseInSlots(String courseID, int dayIndex, int SlotIndexStart, int slotIndexEnd){
+        for(int i = SlotIndexStart; i <= slotIndexEnd; i++){
+            schedule[dayIndex][i].add(courseID);
+        };
+    }
+
+
 
     //checks for conflicts in given slot
-    private boolean isSlotAvailable(LinkedList<String> courseConflicts, int dayIndex, int slotIndex){
-        for(String course: courseConflicts){
-            if(schedule[dayIndex][slotIndex].contains(course)){
-                return false;
+    private boolean isSlotAvailable(course course, int dayIndex, int slotIndex) {
+        String[] courseNameSplit = course.courseID.split("-");
+        String courseID = courseNameSplit[0];
+    
+        if (!course.conflictingCourses.contains(courseID)) {
+            course.conflictingCourses.add(courseID);
+        }
+    
+        System.out.println(course.conflictingCourses.toString());
+    
+        for (String conflict : course.conflictingCourses) {
+    
+            for (String scheduledCourse : schedule[dayIndex][slotIndex]) {
+                String[] scheduledCourseSplit = scheduledCourse.split("-");
+                String scheduledCourseID = scheduledCourseSplit[0];
+                if (scheduledCourseID.equals(conflict)) {
+                    return false;
+                }
             }
+    
         }
         return true;
     }
 
     //checks for conflicts in several slots in a row, used for courses with longer than 1 slot lecture time
-    private boolean areSlotAvailable(LinkedList<String> courseConflicts, int dayIndex, int slotIndexStart, int slotIndexEnd){
+    private boolean areSlotsAvailable(LinkedList<String> courseConflicts, int dayIndex, int slotIndexStart, int slotIndexEnd){
         for(String course: courseConflicts){
             for(int i = slotIndexStart; i <= slotIndexEnd;i++){
                 if(schedule[dayIndex][i].contains(course)){
@@ -146,7 +182,7 @@ public class courseScheduler {
         }
     }
 
-    // TO.DO: fix special cases, special time slots
+    // ISSUE: fix special cases, special time slots
     //convert hours string to index
     private int getSlotIndex(String hour) {
         switch(hour){
