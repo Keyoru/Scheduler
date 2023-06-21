@@ -73,8 +73,8 @@ public class courseScheduler {
 
         boolean courseUnscheduled = true;
         
-        // ISSUE:  case of < 1
-        // day pairs: MON-WED   T-TH 
+        //  ISSUE:   case of < 1
+        //           day pairs: MON-WED   T-TH 
 
         for(String day: course.instructorDays){
             int dayIndex = getDayIndex(day);
