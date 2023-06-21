@@ -32,6 +32,15 @@ public class courseScheduler {
         // if more than 1 section for a course
         // add -1 -2 -3 etc... to course ID  
 
+        // this section adds the course's own code to the its conflict list
+        // this helps with different sections                 
+        String[] courseNameSplit = course.courseID.split("-");
+        String courseID = courseNameSplit[0];
+    
+        if (!course.conflictingCourses.contains(courseID)) {
+            course.conflictingCourses.add(courseID);
+        }
+
         if(course.numberOfSections > 1){
             for(int i = 1; i <= course.numberOfSections;i++){
                 
@@ -41,6 +50,10 @@ public class courseScheduler {
                   course.numberOfSessions,course.instructorName,
                   course.instructorDays,course.instructorHours,course.conflictingCourses,
                   course.courseType,course.nbOfSlots);
+
+
+          
+
                 addCourseHelper(currentSection);
             }
         }else{
@@ -74,7 +87,7 @@ public class courseScheduler {
             int sessionsPerDay = course.numberOfSessions / course.instructorDays.size();
             int sessionsScheduled = 0;
 
-            for(int i = startIndex; i <= endIndex && sessionsScheduled < sessionsPerDay; i++){
+            for(int i = startIndex; i < endIndex && sessionsScheduled < sessionsPerDay; i++){
                 if (isSlotAvailable(course, dayIndex, i)) {
                     if (course.nbOfSlots > 1) {
                         if (areSlotsAvailable(course.conflictingCourses,dayIndex, i,  i + course.nbOfSlots)) {
@@ -117,15 +130,7 @@ public class courseScheduler {
 
     //checks for conflicts in given slot
     private boolean isSlotAvailable(course course, int dayIndex, int slotIndex) {
-        String[] courseNameSplit = course.courseID.split("-");
-        String courseID = courseNameSplit[0];
-    
-        if (!course.conflictingCourses.contains(courseID)) {
-            course.conflictingCourses.add(courseID);
-        }
-    
-        System.out.println(course.conflictingCourses.toString());
-    
+
         for (String conflict : course.conflictingCourses) {
     
             for (String scheduledCourse : schedule[dayIndex][slotIndex]) {
