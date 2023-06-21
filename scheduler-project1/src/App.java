@@ -5,7 +5,7 @@ public class App {
     public static void main(String[] args) {
 
         courseScheduler scheduler = new courseScheduler();
-
+        
         LinkedList<String> instructorDays1 = new LinkedList<>(List.of("Monday", "Wednesday"));
         LinkedList<String> conflictingCourses1 = new LinkedList<>(List.of("MTH202"));
         course course1 = new course("CSE101", "Course 1", 3, 1, 2,
@@ -48,7 +48,7 @@ public class App {
         scheduler.addCourse(course4);
         //scheduler.addCourse(course5);
         //scheduler.addCourse(course6);
-
+        
         System.out.println();
         // Display the course schedule
         scheduler.displaySchedule();

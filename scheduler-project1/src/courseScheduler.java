@@ -23,29 +23,90 @@ public class courseScheduler {
     }
 
 
-
+    //calls the other helper method depending on requirements 
+    //currently handles only section logic
     public void addCourse(course course) {
  
-        if (course.numberofSessions <= 0) {
+        if (course.numberOfSessions <= 0) {
             System.out.println(course.courseID + " has no sessions remaining.");
             return;
         }
+        
+        
 
+        // logic for sections here
+        // if more than 1 section for a course
+        // add -1 -2 -3 etc... to course ID
 
+        if(course.numberOfSections > 1){
+            for(int i = 1; i <= course.numberOfSections;i++){
+                
+                //currentSection same exact attributes as course but with courseID += "-"+i
+                course currentSection = new course(course.courseID+"-"+i,course.courseName,
+                  course.numberOfCredits,course.numberOfSections,
+                  course.numberOfSessions,course.instructorName,
+                  course.instructorDays,course.instructorHours,course.conflictingCourses,
+                  course.courseType,course.nbOfSlots);
+                addCourseHelper(currentSection);
+            }
+        }else{
+            addCourseHelper(course);
+        }
+        
 
     }
+
+
+    private void addCourseHelper(course course) {
+ 
+        if (course.numberOfSessions <= 0) {
+            System.out.println(course.courseID + " has no sessions remaining.");
+            return;
+        }
+        boolean courseUnscheduled = true;
+        int sessionsPerDay = course.numberOfSessions / course.instructorDays.size();
+
+        for(String day: course.instructorDays){
+            int dayIndex = getDayIndex(day);
+
+
+        }
+
+    }
+
 
     //day spread:
     //adding will attempts to spread 
     //lectures across all 
     //available days if possible
-    private void addCourseWithoutSpread(course course) {
+    private void addCourseHelperWithoutSpread(course course) {
 
         
 
     }
     
 
+    //checks for conflicts in given slot
+    private boolean isSlotAvailable(LinkedList<String> courseConflicts, int dayIndex, int slotIndex){
+        for(String course: courseConflicts){
+            if(schedule[dayIndex][slotIndex].contains(course)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //checks for conflicts in several slots in a row, used for courses with longer than 1 slot lecture time
+    private boolean areSlotAvailable(LinkedList<String> courseConflicts, int dayIndex, int slotIndexStart, int slotIndexEnd){
+        for(String course: courseConflicts){
+            for(int i = slotIndexStart; i <= slotIndexEnd;i++){
+                if(schedule[dayIndex][i].contains(course)){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
 
     private int getLastScheduledIndex(LinkedList<String>[] slots) {
@@ -58,8 +119,6 @@ public class courseScheduler {
         return lastScheduledIndex;
     }
     
-    
-
     
     //convert day string to index to use in 2d array
     private int getDayIndex(String day) {
@@ -78,6 +137,7 @@ public class courseScheduler {
                 throw new IllegalArgumentException("Invalid day: " + day);
         }
     }
+
 
     //convert hours string to index
     private int getSlotIndex(String hour) {
@@ -107,6 +167,7 @@ public class courseScheduler {
 
     }
 
+
     private LinkedList<String> convertHourstoSlots(String instructorHours){
         LinkedList<String> slots = new LinkedList<>();
         String[] hours = instructorHours.split("/");
@@ -118,6 +179,7 @@ public class courseScheduler {
         return slots;
     }
 
+
     private boolean checkConflictinSlot(LinkedList<String> conflictsList, LinkedList<String> slotList){
         for (String conflict : conflictsList) {
             if (slotList.contains(conflict)) {
@@ -127,6 +189,7 @@ public class courseScheduler {
         return false;
 
     }
+
 
     public void displaySchedule(){
         for(int i = 0; i < days; i++){

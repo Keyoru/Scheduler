@@ -6,7 +6,7 @@ public class course {
     String courseName;
 
     int numberOfCredits; 
-    int numberofSessions;   //per week
+    int numberOfSessions;   //per week
     int numberOfSections;  //if 2 sections and 2 sessions per week then each section has 2 sessions per week
 
     String instructorName;
@@ -27,7 +27,7 @@ public class course {
         courseName = name;
         numberOfCredits = creds;
         numberOfSections = sections;
-        numberofSessions = sessions;
+        numberOfSessions = sessions;
         instructorName = instname;
         instructorDays = instdays;
         instructorHours = insthours;
