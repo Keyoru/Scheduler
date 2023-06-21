@@ -58,6 +58,9 @@ public class courseScheduler {
             return;
         }
         boolean courseUnscheduled = true;
+        
+        // ISSUE:  case of < 1
+        // day pairs: MON-WED   T-TH 
         int sessionsPerDay = course.numberOfSessions / course.instructorDays.size();
 
         for(String day: course.instructorDays){
@@ -71,7 +74,7 @@ public class courseScheduler {
             int index2 = getSlotIndex(timeslotshour.get(1));
 
             for(int i = index1; i <= index2 ; i++){
-                    
+
             }
 
         }
