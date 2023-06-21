@@ -57,6 +57,7 @@ public class courseScheduler {
             System.out.println(course.courseID + " has no sessions remaining.");
             return;
         }
+
         boolean courseUnscheduled = true;
         
         // ISSUE:  case of < 1
@@ -74,11 +75,11 @@ public class courseScheduler {
             int index2 = getSlotIndex(timeslotshour.get(1));
 
             for(int i = index1; i <= index2 ; i++){
+                
 
             }
 
         }
-
     }
 
 
