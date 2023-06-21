@@ -216,7 +216,7 @@ public class courseScheduler {
     
         for (int i = 0; i < slotTimes.length; i++) {
             if (inputTime.isBefore(slotTimes[i])) {
-                return i - 1;
+                return i ;
             }
         }
     
