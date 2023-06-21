@@ -197,7 +197,6 @@ public class courseScheduler {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         LocalTime inputTime = LocalTime.parse(hour, formatter);
 
-
         if (inputTime.isBefore(LocalTime.parse("08:00"))) {
             throw new IllegalArgumentException("Invalid hour: " + hour);
         } else if (inputTime.equals(LocalTime.parse("12:15")) || inputTime.equals(LocalTime.parse("01:00"))) {
