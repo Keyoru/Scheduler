@@ -2,9 +2,6 @@ import java.util.LinkedList;
 
 public class courseScheduler {
 
-
-    
-
     int days = 5; 
     int timeslots = 6;
 
@@ -19,7 +16,6 @@ public class courseScheduler {
                 schedule[i][j] = new LinkedList<String>();
             }
         }
-
     }
 
 
@@ -31,12 +27,10 @@ public class courseScheduler {
             System.out.println(course.courseID + " has no sessions remaining.");
             return;
         }
-        
-        
 
         // logic for sections here
         // if more than 1 section for a course
-        // add -1 -2 -3 etc... to course ID
+        // add -1 -2 -3 etc... to course ID  
 
         if(course.numberOfSections > 1){
             for(int i = 1; i <= course.numberOfSections;i++){
@@ -69,6 +63,16 @@ public class courseScheduler {
         for(String day: course.instructorDays){
             int dayIndex = getDayIndex(day);
 
+            LinkedList<String> timeslotshour = convertHourstoSlots(course.instructorHours);
+    
+            // Start of instructor's available time (convert string --> int index)
+            int index1 = getSlotIndex(timeslotshour.get(0));
+            // End of instructor's available time (convert string --> int index)
+            int index2 = getSlotIndex(timeslotshour.get(1));
+
+            for(int i = index1; i <= index2 ; i++){
+                    
+            }
 
         }
 
@@ -138,10 +142,9 @@ public class courseScheduler {
         }
     }
 
-
+    // TO.DO: fix special cases, special time slots
     //convert hours string to index
     private int getSlotIndex(String hour) {
-
         switch(hour){
             case "8:00":
                 return 0;
@@ -164,7 +167,6 @@ public class courseScheduler {
             default:
             throw new IllegalArgumentException("Invalid hour: " + hour);
             }
-
     }
 
 
