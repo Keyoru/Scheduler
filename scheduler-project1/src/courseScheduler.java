@@ -89,12 +89,12 @@ public class courseScheduler {
 
             for(int i = startIndex; i < endIndex && sessionsScheduled < sessionsPerDay; i++){
                 if (isSlotAvailable(course, dayIndex, i)) {
-                    if (course.nbOfSlots > 1) {
+                    if (course.nbOfSlots > 1) { // case 1, each course lecture takes more than 1 slot of time
                         if (areSlotsAvailable(course.conflictingCourses,dayIndex, i,  i + course.nbOfSlots)) {
                             scheduleCourseInSlots(course.courseID, dayIndex, startIndex, i + course.nbOfSlots);
                             sessionsScheduled++;
                         }
-                    } else {
+                    } else { // case 2 each course lecture is just 1 slot
                         scheduleCourseInSlot(course.courseID, dayIndex, i);
                         sessionsScheduled++;
                     }
@@ -134,6 +134,10 @@ public class courseScheduler {
         for (String conflict : course.conflictingCourses) {
     
             for (String scheduledCourse : schedule[dayIndex][slotIndex]) {
+
+                // parsing to get rid of -i of different sections
+                // for example instead of comparing PHYS201-2 (present in slot) which isnt present in the course.conflictingCourses
+                // we compare PHYS201
                 String[] scheduledCourseSplit = scheduledCourse.split("-");
                 String scheduledCourseID = scheduledCourseSplit[0];
                 if (scheduledCourseID.equals(conflict)) {
@@ -145,7 +149,8 @@ public class courseScheduler {
         return true;
     }
 
-    //checks for conflicts in several slots in a row, used for courses with longer than 1 slot lecture time
+    // checks for conflicts in several slots in a row, used for courses with longer than 1 slot lecture time
+    // TODO: add lecture parsing like in isSlotAvailable method
     private boolean areSlotsAvailable(LinkedList<String> courseConflicts, int dayIndex, int slotIndexStart, int slotIndexEnd){
         for(String course: courseConflicts){
             for(int i = slotIndexStart; i <= slotIndexEnd;i++){
