@@ -1,4 +1,6 @@
 import java.util.LinkedList;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class courseScheduler {
 
@@ -50,9 +52,6 @@ public class courseScheduler {
                   course.numberOfSessions,course.instructorName,
                   course.instructorDays,course.instructorHours,course.conflictingCourses,
                   course.courseType,course.nbOfSlots);
-
-
-          
 
                 addCourseHelper(currentSection);
             }
@@ -195,28 +194,33 @@ public class courseScheduler {
     // ISSUE: fix special cases, special time slots
     //convert hours string to index
     private int getSlotIndex(String hour) {
-        switch(hour){
-            case "8:00":
-                return 0;
-            case "9:30":
-                return 1;
-            case "11:00":
-                return 2;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        LocalTime inputTime = LocalTime.parse(hour, formatter);
 
-            case "12:15":
-                return 3;
-            case "1:00":
-                return 3;
-            
-            case "2:30":   
-                return 4;
-            case "4:00":
-                return 5;
-            case "5:15":
-                return 6;
-            default:
+
+        if (inputTime.isBefore(LocalTime.parse("08:00"))) {
             throw new IllegalArgumentException("Invalid hour: " + hour);
+        } else if (inputTime.equals(LocalTime.parse("12:15")) || inputTime.equals(LocalTime.parse("01:00"))) {
+            return 3;
+        }
+    
+        LocalTime[] slotTimes = {
+            LocalTime.parse("08:00"),
+            LocalTime.parse("09:30"),
+            LocalTime.parse("11:00"),
+            LocalTime.parse("12:15"),
+            LocalTime.parse("14:30"),
+            LocalTime.parse("16:00"),
+            LocalTime.parse("17:15")
+        };
+    
+        for (int i = 0; i < slotTimes.length; i++) {
+            if (inputTime.isBefore(slotTimes[i])) {
+                return i - 1;
             }
+        }
+    
+        return slotTimes.length - 1;
     }
 
 
