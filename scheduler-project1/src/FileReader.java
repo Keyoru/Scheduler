@@ -72,9 +72,11 @@ public class FileReader {
                             num_of_slots = cell.getStringCellValue();
                             break;      
                         case 12:
+                            conflicting_courses = new LinkedList<String>();
                             conflicting_courses = cell.getStringCellValue();
                             break; 
                         case 13:
+                            instructors_day = new LinkedList<String>();
                             instructors_day = cell.getStringCellValue();
                             break;                                         
                     }
