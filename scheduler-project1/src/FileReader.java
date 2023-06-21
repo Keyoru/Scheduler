@@ -12,8 +12,8 @@ public class FileReader {
         this.file = file;
     }
 
-    public LinkedList<Course> readCoursesFromSheet(String sheetName) throws IOException {
-        LinkedList<Course> courseList = new LinkedList<>();
+    public LinkedList<course> readCoursesFromSheet(String sheetName) throws IOException {
+        LinkedList<course> courseList = new LinkedList<>();
 
         FileInputStream fis = new FileInputStream(file);
         Workbook workbook = new XSSFWorkbook(fis);
@@ -82,7 +82,7 @@ public class FileReader {
                     }
                 }
 
-                Course course = new course(course_id, course_name, Integer.parseInt(num_credits),Integer.parseInt(num_sections),Integer.parseInt(num_sessions),instructor_name,
+                course course = new course(course_id, course_name, Integer.parseInt(num_credits),Integer.parseInt(num_sections),Integer.parseInt(num_sessions),instructor_name,
                                         instructors_day,instructor_hours,conflicting_courses,course_type, Integer.parseInt(num_of_slots));
                 courseList.add(course);
             }
