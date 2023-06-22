@@ -1,0 +1,16 @@
+adding course PHY201-1
+Start timeslot Index = 2
+End timeslot Index = 6
+Days[Monday, Wednesday]
+added course to day: 0 time slot: 2
+added course to day: 2 time slot: 2
+
+
+adding course PHY201-2
+Start timeslot Index = 2
+End timeslot Index = 6
+Days[Monday, Wednesday]
+added course to day: 0 time slot: 3
+added course to day: 2 time slot: 3
+
+

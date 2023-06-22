@@ -29,7 +29,7 @@ public class App {
         LinkedList<String> instructorDays4 = new LinkedList<>(List.of("Monday", "Wednesday"));
         LinkedList<String> conflictingCourses4 = new LinkedList<>(List.of("CSE101", "MTH202"));
         course course4 = new course("PHY201", "Course 4", 4, 2, 2,
-                "Michael Brown", instructorDays4, "11:00 / 12:15", conflictingCourses4,
+                "Michael Brown", instructorDays4, "11:00 / 17:30", conflictingCourses4,
                 "Type 4", 1);
 
 

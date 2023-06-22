@@ -74,11 +74,12 @@ public class courseScheduler {
         }
         System.out.println(course.conflictingCourses.toString());
 
+        course currentSection = null;
         if(course.numberOfSections > 1){
             for(int i = 1; i <= course.numberOfSections;i++){
                 
                 //currentSection same exact attributes as course but with courseID += "-"+i
-                course currentSection = new course(course.courseID+"-"+i,course.courseName,
+               currentSection = new course(course.courseID+"-"+i,course.courseName,
                   course.numberOfCredits,course.numberOfSections,
                   course.numberOfSessions,course.instructorName,
                   course.instructorDays,course.instructorHours,course.conflictingCourses,
@@ -86,10 +87,12 @@ public class courseScheduler {
 
                 
                 addCourseHelper(currentSection);
+                
                 if(currentSection.numberOfSessions > 0){
                     unscheduledCourseHeap.add(currentSection);
                 }
             }
+
         }else{
             printWriter.println("Adding course " + course.courseID);
             addCourseHelper(course);
@@ -108,19 +111,21 @@ public class courseScheduler {
         
         //  ISSUE:   case of < 1
         //           day pairs: MON-WED   T-TH 
-
+        LinkedList<String> timeslots = convertHourstoSlots(course.instructorHours);
+        int[] slots = getSlotsIndicies(timeslots.get(0), timeslots.get(1));
+        int startIndex = slots[0];
+        int endIndex = slots[1];
+        
+        printWriter.println("adding course " + course.courseID + "\nStart timeslot Index = " + startIndex + "\nEnd timeslot Index = " + endIndex + "\nDays" + course.instructorDays.toString());
+            
         for(String day: course.instructorDays){
             int dayIndex = getDayIndex(day);
             
-            LinkedList<String> timeslots = convertHourstoSlots(course.instructorHours);
-            int[] slots = getSlotsIndicies(timeslots.get(0), timeslots.get(1));
-            int startIndex = slots[0];
-            int endIndex = slots[1];
+
 
             int sessionsPerDay = course.numberOfSessions / course.instructorDays.size();
             int sessionsScheduled = 0;
 
-            printWriter.println("adding course " + course.courseID + "\nStart timeslot Index = " + startIndex + "\nEnd timeslot Index = " + endIndex + "\nDays" + course.instructorDays.toString());
             for(int i = startIndex; i < endIndex && sessionsScheduled < sessionsPerDay; i++){
                 if (isSlotAvailable(course, dayIndex, i)) {
                     if (course.nbOfSlots > 1) { // case 1, each course lecture takes more than 1 slot of time
@@ -152,13 +157,17 @@ public class courseScheduler {
 
 
     private void scheduleCourseInSlot(String courseID, int dayIndex, int slotIndex){
+        printWriter.println("added course to day: " + dayIndex + " time slot: "+ slotIndex);
         schedule[dayIndex][slotIndex].add(courseID);
+        printWriter.flush();
     }
     
     private void scheduleCourseInSlots(String courseID, int dayIndex, int SlotIndexStart, int slotIndexEnd){
         for(int i = SlotIndexStart; i <= slotIndexEnd; i++){
+            printWriter.println("added course to day: " + dayIndex + " time slot: "+ i);
             schedule[dayIndex][i].add(courseID);
         };
+        printWriter.flush();
     }
 
 
