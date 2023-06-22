@@ -74,19 +74,15 @@ public class courseScheduler {
             int dayIndex = getDayIndex(day);
             
             LinkedList<String> timeslots = convertHourstoSlots(course.instructorHours);
-
-            int startIndex = getSlotIndex(timeslots.getFirst());
-            int endIndex = getSlotIndex(timeslots.getLast());
+            int[] slots = getSlotsIndicies(timeslots.get(0), timeslots.get(1));
+            int startIndex = slots[0];
+            int endIndex = slots[1];
 
             int sessionsPerDay = course.numberOfSessions / course.instructorDays.size();
             int sessionsScheduled = 0;
 
-            System.out.println(startIndex);
-            System.out.println(endIndex);
-            if(startIndex == endIndex){
-                break;
-            }
-            for(int i = startIndex; i <= endIndex && sessionsScheduled < sessionsPerDay; i++){
+
+            for(int i = startIndex; i < endIndex && sessionsScheduled < sessionsPerDay; i++){
                 if (isSlotAvailable(course, dayIndex, i)) {
                     if (course.nbOfSlots > 1) { // case 1, each course lecture takes more than 1 slot of time
                         if (areSlotsAvailable(course.conflictingCourses,dayIndex, i,  i + course.nbOfSlots - 1)) {
@@ -191,46 +187,56 @@ public class courseScheduler {
     }
 
 
-    private int getSlotIndex(String hour) {
+    private int[] getSlotsIndicies(String hour1, String hour2) {
+        LocalTime startTime = LocalTime.parse(hour1);
+        LocalTime endTime = LocalTime.parse(hour2);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        LocalTime inputTime = LocalTime.parse(hour, formatter);
 
-        //special cases here
-        if (inputTime.isBefore(LocalTime.parse("08:00"))) { 
-            return 0;
-        }
-        if(inputTime.equals(LocalTime.parse("12:15")) || inputTime.equals(LocalTime.parse("13:00"))){ 
-            return 2;
-        }
-        if (inputTime.isAfter(LocalTime.parse("12:15")) && inputTime.isBefore(LocalTime.parse("13:00"))) { // aka lunch break time
-            System.out.println("between 12:15 and 1");
-            return 2;
-        }
-        if (inputTime.isAfter(LocalTime.parse("13:00")) && inputTime.isBefore(LocalTime.parse("14:30"))) { // idk why this has to be here but without it doesnt work
-            System.out.println("between 12:15 and 1");
-            return 2;
-        }
+        LocalTime[] slots = {
+            LocalTime.parse("08:00"), // Slot 0
+            LocalTime.parse("09:30"), // Slot 1
+            LocalTime.parse("11:00"), // Slot 2
+            LocalTime.parse("13:00"), // Slot 3
+            LocalTime.parse("14:30"), // Slot 4
+            LocalTime.parse("16:00")  // Slot 5
+    };
 
-        
-        LocalTime[] slotTimes = {
-            LocalTime.parse("08:00"),
-            LocalTime.parse("09:30"),
-            LocalTime.parse("11:00"),
-            LocalTime.parse("12:15"),
-            LocalTime.parse("14:30"),
-            LocalTime.parse("16:00"),
-            LocalTime.parse("17:15")
-        };
-        for (int i = 0; i < slotTimes.length; i++) {
-            if(inputTime.equals(slotTimes[i])){
-                return i;
-            } else if (inputTime.isAfter(slotTimes[i]) && inputTime.isBefore(slotTimes[i + 1])) {
-                return i+1;
+    int startSlot = -1;
+    int endSlot = -1;
+
+    // Find the first slot
+        if((startTime.isAfter(LocalTime.parse("12:15")) && startTime.isBefore(LocalTime.parse("13:00")))
+            || startTime.equals(LocalTime.parse("12:15"))){
+                startSlot = 3;
+        }else{
+            for (int i = 0; i < slots.length; i++) {
+                if (startTime.isBefore(slots[i]) || startTime.equals(slots[i])) {
+                    startSlot = i;
+                    break;
+                }
             }
         }
-        return slotTimes.length - 1;
-    }
+
+        // Find the last slot
+        if((endTime.isAfter(LocalTime.parse("12:15")) && endTime.isBefore(LocalTime.parse("13:00")))
+            || endTime.equals(LocalTime.parse("12:15"))){
+            endSlot = 3;
+        }else{
+            for (int i = startSlot; i < slots.length; i++) {
+                if (endTime.isBefore(slots[i]) || endTime.equals(slots[i])) {
+                    endSlot = i-1;
+                    break;
+                }
+            }
+        }
+
+
+    System.out.println(startSlot);
+    System.out.println(endSlot);
+
+    // Return the viable slots as an array
+    return new int[]{startSlot, endSlot};
+    } 
 
     // returns hours as strings
     // these are to be sent to function:getSlotIndex()
