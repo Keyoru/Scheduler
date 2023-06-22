@@ -2,6 +2,11 @@ import java.util.LinkedList;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+
 public class courseScheduler {
 
     int days = 5; 
@@ -12,13 +17,25 @@ public class courseScheduler {
     //for courses with no place found to store them
     LinkedList<course> unscheduledCourseHeap = new LinkedList<>();
 
-    courseScheduler(){
-        for(int i = 0;i < days;i++){
-            for(int j = 0; j < timeslots; j++){
-                schedule[i][j] = new LinkedList<String>();
+    FileWriter fileWriter;
+    PrintWriter printWriter; 
+
+    courseScheduler() {
+        try {
+            fileWriter = new FileWriter("logs/log.txt", true); // 'true' for appending to an existing file
+            printWriter = new PrintWriter(fileWriter);
+
+            for(int i = 0;i < days;i++){
+                for(int j = 0; j < timeslots; j++){
+                    schedule[i][j] = new LinkedList<String>();
+                }
             }
+
+        } catch (IOException e) {
+            System.out.println("An error occurred while writing to the log file: " + e.getMessage());
         }
     }
+
 
 
     //calls the other helper method depending on requirements 
@@ -53,11 +70,18 @@ public class courseScheduler {
                   course.numberOfSessions,course.instructorName,
                   course.instructorDays,course.instructorHours,course.conflictingCourses,
                   course.courseType,course.nbOfSlots);
-
+                printWriter.println("Adding course " + course.courseID);
                 addCourseHelper(currentSection);
+                if(currentSection.numberOfSessions > 0){
+                    unscheduledCourseHeap.add(currentSection);
+                }
             }
         }else{
+            printWriter.println("Adding course " + course.courseID);
             addCourseHelper(course);
+            if(course.numberOfSessions > 0){
+                unscheduledCourseHeap.add(course);
+            }
         }
 
     }
@@ -65,7 +89,7 @@ public class courseScheduler {
 
     private void addCourseHelper(course course) {
 
-        boolean courseUnscheduled = true;
+
         
         //  ISSUE:   case of < 1
         //           day pairs: MON-WED   T-TH 
@@ -203,7 +227,7 @@ public class courseScheduler {
         int endSlot = -1;
 
         // Find the first slot
-        if((startTime.isAfter(LocalTime.parse("12:15")) && startTime.isBefore(LocalTime.parse("13:00")))
+        if((startTime.isAfter(LocalTime.parse("12:15")) && startTime.isBefore(LocalTime.parse("13:00"))) // between 12:15 and 1 exclusive
             || startTime.equals(LocalTime.parse("12:15"))){
                 startSlot = 3;
         }else{
@@ -216,19 +240,19 @@ public class courseScheduler {
                 }
             }
             if(!slotFound){
-                endSlot = slots.length-2;
+                startSlot = slots.length-2;
             }
         }
 
         // Find the last slot
-        if((endTime.isAfter(LocalTime.parse("12:15")) && endTime.isBefore(LocalTime.parse("13:00")))
+        if((endTime.isAfter(LocalTime.parse("12:15")) && endTime.isBefore(LocalTime.parse("13:00"))) // between 12:15 and 1 exclusive
             || endTime.equals(LocalTime.parse("12:15"))){
             endSlot = 3;
         }else{
             boolean slotFound = false;
             for (int i = startSlot; i < slots.length; i++) {
                 if (endTime.isBefore(slots[i]) || endTime.equals(slots[i])) {
-                    endSlot = i;
+                    endSlot = i-1;
                     slotFound = true;
                     break;
                 }
