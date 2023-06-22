@@ -1,5 +1,6 @@
 import java.util.LinkedList;
 import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import java.io.FileWriter;
@@ -22,9 +23,17 @@ public class courseScheduler {
     File logFile;
 
     courseScheduler() {
+
         try {
+
+            LocalDateTime currentTime = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+            String timestamp = currentTime.format(formatter);
     
-            logFile = new File("log.txt");
+            String fileName = "log_" + timestamp + ".txt";
+            logFile = new File(fileName);
+    
+
             fileWriter = new FileWriter(logFile, true); // 'true' for appending to an existing file
             printWriter = new PrintWriter(fileWriter);
 
@@ -44,7 +53,8 @@ public class courseScheduler {
     //calls the other helper method depending on requirements 
     //currently handles only section logic
     public void addCourse(course course) {
- 
+
+
         if (course.numberOfSessions <= 0) {
             System.out.println(course.courseID + " has no sessions remaining.");
             return;
@@ -73,7 +83,8 @@ public class courseScheduler {
                   course.numberOfSessions,course.instructorName,
                   course.instructorDays,course.instructorHours,course.conflictingCourses,
                   course.courseType,course.nbOfSlots);
-                printWriter.println("Adding course " + course.courseID);
+
+                
                 addCourseHelper(currentSection);
                 if(currentSection.numberOfSessions > 0){
                     unscheduledCourseHeap.add(currentSection);
@@ -86,6 +97,7 @@ public class courseScheduler {
                 unscheduledCourseHeap.add(course);
             }
         }
+
 
     }
 
@@ -108,7 +120,7 @@ public class courseScheduler {
             int sessionsPerDay = course.numberOfSessions / course.instructorDays.size();
             int sessionsScheduled = 0;
 
-
+            printWriter.println("adding course " + course.courseID + "\nStart timeslot Index = " + startIndex + "\nEnd timeslot Index = " + endIndex + "\nDays" + course.instructorDays.toString());
             for(int i = startIndex; i < endIndex && sessionsScheduled < sessionsPerDay; i++){
                 if (isSlotAvailable(course, dayIndex, i)) {
                     if (course.nbOfSlots > 1) { // case 1, each course lecture takes more than 1 slot of time
@@ -123,6 +135,8 @@ public class courseScheduler {
                 }
             }
         }
+        printWriter.println("\n");
+        printWriter.flush();
     }
 
 
