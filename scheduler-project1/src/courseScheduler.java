@@ -27,7 +27,7 @@ public class courseScheduler {
         try {
 
             LocalDateTime currentTime = LocalDateTime.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM_dd_HH:mm");
             String timestamp = currentTime.format(formatter);
     
             String fileName = "log_" + timestamp + ".txt";
