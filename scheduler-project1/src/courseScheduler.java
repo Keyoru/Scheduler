@@ -83,7 +83,10 @@ public class courseScheduler {
 
             System.out.println(startIndex);
             System.out.println(endIndex);
-            for(int i = startIndex; i < endIndex && sessionsScheduled < sessionsPerDay; i++){
+            if(startIndex == endIndex){
+                break;
+            }
+            for(int i = startIndex; i <= endIndex && sessionsScheduled < sessionsPerDay; i++){
                 if (isSlotAvailable(course, dayIndex, i)) {
                     if (course.nbOfSlots > 1) { // case 1, each course lecture takes more than 1 slot of time
                         if (areSlotsAvailable(course.conflictingCourses,dayIndex, i,  i + course.nbOfSlots - 1)) {
@@ -193,14 +196,22 @@ public class courseScheduler {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         LocalTime inputTime = LocalTime.parse(hour, formatter);
 
-        if (inputTime.isBefore(LocalTime.parse("08:00"))) {
+        //special cases here
+        if (inputTime.isBefore(LocalTime.parse("08:00"))) { 
             return 0;
         }
-        if (inputTime.isAfter(LocalTime.parse("12:15")) && inputTime.isBefore(LocalTime.parse("13:00"))) {
+        if(inputTime.equals(LocalTime.parse("12:15")) || inputTime.equals(LocalTime.parse("13:00"))){ 
+            return 2;
+        }
+        if (inputTime.isAfter(LocalTime.parse("12:15")) && inputTime.isBefore(LocalTime.parse("13:00"))) { // aka lunch break time
             System.out.println("between 12:15 and 1");
             return 2;
         }
-        
+        if (inputTime.isAfter(LocalTime.parse("13:00")) && inputTime.isBefore(LocalTime.parse("14:30"))) { // idk why this has to be here but without it doesnt work
+            System.out.println("between 12:15 and 1");
+            return 2;
+        }
+
         
         LocalTime[] slotTimes = {
             LocalTime.parse("08:00"),
