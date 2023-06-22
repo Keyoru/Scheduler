@@ -81,11 +81,13 @@ public class courseScheduler {
             int sessionsPerDay = course.numberOfSessions / course.instructorDays.size();
             int sessionsScheduled = 0;
 
+            System.out.println(startIndex);
+            System.out.println(endIndex);
             for(int i = startIndex; i < endIndex && sessionsScheduled < sessionsPerDay; i++){
                 if (isSlotAvailable(course, dayIndex, i)) {
                     if (course.nbOfSlots > 1) { // case 1, each course lecture takes more than 1 slot of time
-                        if (areSlotsAvailable(course.conflictingCourses,dayIndex, i,  i + course.nbOfSlots)) {
-                            scheduleCourseInSlots(course.courseID, dayIndex, startIndex, i + course.nbOfSlots);
+                        if (areSlotsAvailable(course.conflictingCourses,dayIndex, i,  i + course.nbOfSlots - 1)) {
+                            scheduleCourseInSlots(course.courseID, dayIndex, startIndex, i + course.nbOfSlots - 1);
                             sessionsScheduled++;
                         }
                     } else { // case 2 each course lecture is just 1 slot
@@ -123,7 +125,7 @@ public class courseScheduler {
 
     //checks for conflicts in given slot
     private boolean isSlotAvailable(course course, int dayIndex, int slotIndex) {
-
+        
         for (String conflict : course.conflictingCourses) {
     
             for (String scheduledCourse : schedule[dayIndex][slotIndex]) {
@@ -185,19 +187,21 @@ public class courseScheduler {
         }
     }
 
-    // ISSUE: fix special cases, special time slots
-    //convert hours string to index
+
     private int getSlotIndex(String hour) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         LocalTime inputTime = LocalTime.parse(hour, formatter);
 
         if (inputTime.isBefore(LocalTime.parse("08:00"))) {
-            throw new IllegalArgumentException("Invalid hour: " + hour);
-        } else if (inputTime.equals(LocalTime.parse("12:15")) || inputTime.equals(LocalTime.parse("01:00"))) {
-            return 3;
+            return 0;
         }
-    
+        if (inputTime.isAfter(LocalTime.parse("12:15")) && inputTime.isBefore(LocalTime.parse("13:00"))) {
+            System.out.println("between 12:15 and 1");
+            return 2;
+        }
+        
+        
         LocalTime[] slotTimes = {
             LocalTime.parse("08:00"),
             LocalTime.parse("09:30"),
@@ -208,14 +212,17 @@ public class courseScheduler {
             LocalTime.parse("17:15")
         };
         for (int i = 0; i < slotTimes.length; i++) {
-            if (inputTime.isBefore(slotTimes[i])) {
-                return i ;
+            if(inputTime.equals(slotTimes[i])){
+                return i;
+            } else if (inputTime.isAfter(slotTimes[i]) && inputTime.isBefore(slotTimes[i + 1])) {
+                return i+1;
             }
         }
         return slotTimes.length - 1;
     }
 
-
+    // returns hours as strings
+    // these are to be sent to function:getSlotIndex()
     private LinkedList<String> convertHourstoSlots(String instructorHours){
         LinkedList<String> slots = new LinkedList<>();
         String[] hours = instructorHours.split("/");

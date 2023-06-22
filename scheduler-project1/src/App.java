@@ -10,14 +10,14 @@ public class App {
         
         LinkedList<String> instructorDays1 = new LinkedList<>(List.of("Monday", "Wednesday"));
         LinkedList<String> conflictingCourses1 = new LinkedList<>(List.of("MTH202"));
-        course course1 = new course("CSE101", "Course 1", 3, 1, 2,
-                "John Doe", instructorDays1, "08:00 / 17:15", conflictingCourses1,
+        course course1 = new course("CSE101", "Course 1", 3, 2, 2,
+                "John Doe", instructorDays1, "08:00 / 11:00", conflictingCourses1,
                 "Type 1", 1);
 
-        LinkedList<String> instructorDays2 = new LinkedList<>(List.of("Tuesday"));
+        LinkedList<String> instructorDays2 = new LinkedList<>(List.of("Tuesday", "Thursday"));
         LinkedList<String> conflictingCourses2 = new LinkedList<>(List.of("CSE101"));
         course course2 = new course("MTH202", "Course 2", 4, 1, 2,
-                "Jane Smith", instructorDays2, "11:00 / 14:30", conflictingCourses2,
+                "Jane Smith", instructorDays2, "11:15 / 12:30", conflictingCourses2,
                 "Type 2", 1);
 
         LinkedList<String> instructorDays3 = new LinkedList<>(List.of("Friday"));
@@ -46,11 +46,11 @@ public class App {
 
 
 
-        scheduler.addCourse(course1);
+        //scheduler.addCourse(course1);
         scheduler.addCourse(course2);
-        scheduler.addCourse(course3);
-        scheduler.addCourse(course4);
-        scheduler.addCourse(course5);
+        //scheduler.addCourse(course3);
+        //scheduler.addCourse(course4);
+        //scheduler.addCourse(course5);
         //scheduler.addCourse(course6);
         
         System.out.println();
