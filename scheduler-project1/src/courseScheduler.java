@@ -42,6 +42,7 @@ public class courseScheduler {
         if (!course.conflictingCourses.contains(courseID)) {
             course.conflictingCourses.add(courseID);
         }
+        System.out.println(course.conflictingCourses.toString());
 
         if(course.numberOfSections > 1){
             for(int i = 1; i <= course.numberOfSections;i++){
@@ -58,7 +59,6 @@ public class courseScheduler {
         }else{
             addCourseHelper(course);
         }
-        
 
     }
 
@@ -85,8 +85,8 @@ public class courseScheduler {
             for(int i = startIndex; i < endIndex && sessionsScheduled < sessionsPerDay; i++){
                 if (isSlotAvailable(course, dayIndex, i)) {
                     if (course.nbOfSlots > 1) { // case 1, each course lecture takes more than 1 slot of time
-                        if (areSlotsAvailable(course.conflictingCourses,dayIndex, i,  i + course.nbOfSlots - 1)) {
-                            scheduleCourseInSlots(course.courseID, dayIndex, startIndex, i + course.nbOfSlots - 1);
+                        if (areSlotsAvailable(course,dayIndex, i,  i + course.nbOfSlots - 1)) {
+                            scheduleCourseInSlots(course.courseID, dayIndex, i, i + course.nbOfSlots - 1);
                             sessionsScheduled++;
                         }
                     } else { // case 2 each course lecture is just 1 slot
@@ -145,13 +145,10 @@ public class courseScheduler {
 
     // checks for conflicts in several slots in a row, used for courses with longer than 1 slot lecture time
     // TODO: add lecture parsing like in isSlotAvailable method
-    private boolean areSlotsAvailable(LinkedList<String> courseConflicts, int dayIndex, int slotIndexStart, int slotIndexEnd){
-        for(String course: courseConflicts){
-            for(int i = slotIndexStart; i <= slotIndexEnd;i++){
-                if(schedule[dayIndex][i].contains(course)){
-                    return false;
-                }
-            }
+    private boolean areSlotsAvailable(course course, int dayIndex, int slotIndexStart, int slotIndexEnd){
+
+        for(int i = slotIndexStart; i <= slotIndexEnd;i++){
+            return isSlotAvailable(course, dayIndex, i);
         }
         return true;
     }
@@ -186,7 +183,7 @@ public class courseScheduler {
         }
     }
 
-
+    //p sure this is working now
     private int[] getSlotsIndicies(String hour1, String hour2) {
         LocalTime startTime = LocalTime.parse(hour1);
         LocalTime endTime = LocalTime.parse(hour2);
@@ -198,13 +195,14 @@ public class courseScheduler {
             LocalTime.parse("11:00"), // Slot 2
             LocalTime.parse("13:00"), // Slot 3
             LocalTime.parse("14:30"), // Slot 4
-            LocalTime.parse("16:00")  // Slot 5
-    };
+            LocalTime.parse("16:00"), // Slot 5
+            LocalTime.parse("17:15")  // Final hour
+        };
 
-    int startSlot = -1;
-    int endSlot = -1;
+        int startSlot = -1;
+        int endSlot = -1;
 
-    // Find the first slot
+        // Find the first slot
         if((startTime.isAfter(LocalTime.parse("12:15")) && startTime.isBefore(LocalTime.parse("13:00")))
             || startTime.equals(LocalTime.parse("12:15"))){
                 startSlot = 3;
@@ -229,10 +227,6 @@ public class courseScheduler {
                 }
             }
         }
-
-
-    System.out.println(startSlot);
-    System.out.println(endSlot);
 
     // Return the viable slots as an array
     return new int[]{startSlot, endSlot};
