@@ -207,11 +207,16 @@ public class courseScheduler {
             || startTime.equals(LocalTime.parse("12:15"))){
                 startSlot = 3;
         }else{
+            boolean slotFound = false;
             for (int i = 0; i < slots.length; i++) {
                 if (startTime.isBefore(slots[i]) || startTime.equals(slots[i])) {
                     startSlot = i;
+                    slotFound = true;
                     break;
                 }
+            }
+            if(!slotFound){
+                endSlot = slots.length-2;
             }
         }
 
@@ -220,17 +225,24 @@ public class courseScheduler {
             || endTime.equals(LocalTime.parse("12:15"))){
             endSlot = 3;
         }else{
+            boolean slotFound = false;
             for (int i = startSlot; i < slots.length; i++) {
                 if (endTime.isBefore(slots[i]) || endTime.equals(slots[i])) {
-                    endSlot = i-1;
+                    endSlot = i;
+                    slotFound = true;
                     break;
+                }
+                if(!slotFound){
+                    endSlot = slots.length-1;
                 }
             }
         }
-
-    // Return the viable slots as an array
-    return new int[]{startSlot, endSlot};
+        System.out.println(hour1 + "    " + startSlot);
+        System.out.println(hour2 + "    " + endSlot);
+        // Return the viable slots as an array
+        return new int[]{startSlot, endSlot};
     } 
+
 
     // returns hours as strings
     // these are to be sent to function:getSlotIndex()
