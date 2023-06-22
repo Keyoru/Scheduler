@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-
+import java.io.File;
 
 public class courseScheduler {
 
@@ -19,10 +19,13 @@ public class courseScheduler {
 
     FileWriter fileWriter;
     PrintWriter printWriter; 
+    File logFile;
 
     courseScheduler() {
         try {
-            fileWriter = new FileWriter("logs/log.txt", true); // 'true' for appending to an existing file
+    
+            logFile = new File("log.txt");
+            fileWriter = new FileWriter(logFile, true); // 'true' for appending to an existing file
             printWriter = new PrintWriter(fileWriter);
 
             for(int i = 0;i < days;i++){
@@ -261,8 +264,6 @@ public class courseScheduler {
                 }
             }
         }
-        System.out.println(hour1 + "    " + startSlot);
-        System.out.println(hour2 + "    " + endSlot);
         // Return the viable slots as an array
         return new int[]{startSlot, endSlot};
     } 
