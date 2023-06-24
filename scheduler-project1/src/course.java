@@ -10,9 +10,9 @@ public class course {
     int numberOfSections;  //if 2 sections and 2 sessions per week then each section has 2 sessions per week
 
     String instructorName;
-    LinkedList<String> instructorDays;
-    String instructorHours; //format for example
-                            //8:00 / 9:30 
+    LinkedList<Integer> instructorDays;
+    int TimeSlotIndexstart;
+    int TimeSlotIndexEnd; 
 
     LinkedList<String> conflictingCourses;
 
@@ -21,7 +21,7 @@ public class course {
                      //if course lecture length is 1:15 then 1 slot, 2 hours length is 2 slots etc etc
 
     course(String ID, String name, int creds, int sections, int sessions, String instname,
-     LinkedList<String> instdays, String insthours, LinkedList<String> conflicts
+     LinkedList<Integer> instdays, int index1, int index2, LinkedList<String> conflicts
      ,String Type, int Slots){
         courseID = ID;
         courseName = name;
@@ -30,7 +30,8 @@ public class course {
         numberOfSessions = sessions;
         instructorName = instname;
         instructorDays = instdays;
-        instructorHours = insthours;
+        TimeSlotIndexstart = index1;
+        TimeSlotIndexEnd = index2;
         conflictingCourses = conflicts;
         courseType = Type;
         nbOfSlots = Slots;
