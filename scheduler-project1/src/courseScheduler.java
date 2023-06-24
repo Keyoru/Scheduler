@@ -19,7 +19,7 @@ public class courseScheduler {
     int timeslots = 6;
 
     LinkedList<String>[][] schedule = new LinkedList[days][timeslots];
-    private Map<UUID, course> courseMap;
+    Map<UUID, course> courseMap;
 
 
     
@@ -56,13 +56,18 @@ public class courseScheduler {
         }
     }
 
+    public void ScheduleCourses(){
+        for(UUID courseId: courseMap.keySet()){
+            addCourse(courseId);
+        }
+    }
 
 
     //calls the other helper method depending on requirements 
     //currently handles only section logic
-    public void addCourse(course course) {
+    public void addCourse(UUID courseId) {
 
-
+        course course = courseMap.get(courseId);
 
         // logic for sections here
         // if more than 1 section for a course
@@ -89,21 +94,23 @@ public class courseScheduler {
                   course.instructorDays,course.TimeSlotIndexstart, course.TimeSlotIndexEnd,course.conflictingCourses,
                   course.courseType,course.nbOfSlots);
 
-                UUID uuid = UUID.randomUUID();
-                courseMap.put(uuid, currentSection);
                 
-                addCourseHelper(uuid);
+                UUID courseSectionId = UUID.randomUUID();
+                courseMap.put(courseSectionId, currentSection);
+                
+                addCourseHelper(courseSectionId);
                 
                 if(currentSection.numberOfSessions > 0){
                     unscheduledCourseHeap.add(currentSection);
                 }
             }
+            courseMap.remove(courseId);
 
         }else{
             printWriter.println("Adding course " + course.courseID);
-            UUID uuid = UUID.randomUUID();
-            courseMap.put(uuid, course);
-            addCourseHelper(uuid);
+            
+            courseMap.put(courseId, course);
+            addCourseHelper(courseId);
             if(course.numberOfSessions > 0){
                 unscheduledCourseHeap.add(course);
             }
