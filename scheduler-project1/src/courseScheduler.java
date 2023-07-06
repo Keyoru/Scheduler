@@ -55,7 +55,7 @@ public class courseScheduler {
             // Initialize day pairs (M,W) and (T,Th)
             dayPairs.add(List.of(0, 2)); // Monday, Wednesday
             dayPairs.add(List.of(1, 3)); // Tuesday, Thursday
-            dayPairs.add(List.of(2, 5)); // Wednesday, Friday
+            dayPairs.add(List.of(2, 4)); // Wednesday, Friday
 
             for(int i = 0;i < days;i++){
                 for(int j = 0; j < timeslots; j++){
@@ -153,38 +153,43 @@ public class courseScheduler {
     }
 
     private boolean attemptDayPairSchedule(UUID courseId) {
-        
         course course = courseMap.get(courseId);
-        
-        for (List<Integer> dayPair : dayPairs) {
-
-
     
+        for (List<Integer> dayPair : dayPairs) {
             if (canWorkWith(dayPair, courseMap.get(courseId).instructorDays)) {
-                
                 int pairSessions = course.numberOfSessions / 2;
                 int sessionsScheduled = 0;
-                boolean SwitchDayPairFlag = true;
-
-                int dayIndex = dayPair.get(0);
-
-                for (int i = course.TimeSlotIndexstart; i < course.TimeSlotIndexEnd && sessionsScheduled <= pairSessions; i++) {
-                    if (isSlotAvailable(courseId, dayIndex, i)) {
-                        if (course.nbOfSlots > 1 && areSlotsAvailable(courseId, dayIndex, i, i + course.nbOfSlots - 1)) {
-                            scheduleCourseInSlots(courseId, SwitchDayPairFlag?dayPair.get(0):dayPair.get(1), i, i + course.nbOfSlots - 1);
-                            SwitchDayPairFlag = !SwitchDayPairFlag;
-                            sessionsScheduled++;
-                        } else if (course.nbOfSlots == 1) {
-                            scheduleCourseInSlot(courseId, SwitchDayPairFlag?dayPair.get(0):dayPair.get(1), i);
-                            SwitchDayPairFlag = !SwitchDayPairFlag;
-                            sessionsScheduled++;
-                        }
-                    }
-                }                System.out.println(sessionsScheduled);
     
-                if (sessionsScheduled == course.numberOfSessions) {
+                int dayIndex1 = dayPair.get(0);
+                int dayIndex2 = dayPair.get(1);
+                int timeSlotIndex = course.TimeSlotIndexstart;
+    
+                while (sessionsScheduled < pairSessions) {
+                    if (isSlotAvailable(courseId, dayIndex1, timeSlotIndex) &&
+                        isSlotAvailable(courseId, dayIndex2, timeSlotIndex)) {
+                        if (course.nbOfSlots > 1 &&
+                            areSlotsAvailable(courseId, dayIndex1, timeSlotIndex, timeSlotIndex + course.nbOfSlots - 1) &&
+                            areSlotsAvailable(courseId, dayIndex2, timeSlotIndex, timeSlotIndex + course.nbOfSlots - 1)) {
+                            scheduleCourseInSlots(courseId, dayIndex1, timeSlotIndex, timeSlotIndex + course.nbOfSlots - 1);
+                            scheduleCourseInSlots(courseId, dayIndex2, timeSlotIndex, timeSlotIndex + course.nbOfSlots - 1);
+                            sessionsScheduled += course.nbOfSlots;
+                            timeSlotIndex += course.nbOfSlots;
+                        } else if (course.nbOfSlots == 1) {
+                            scheduleCourseInSlot(courseId, dayIndex1, timeSlotIndex);
+                            scheduleCourseInSlot(courseId, dayIndex2, timeSlotIndex);
+                            sessionsScheduled++;
+                            timeSlotIndex++;
+                        }
+                    } else {
+                        timeSlotIndex++;
+                    }
+                }
+    
+                System.out.println(sessionsScheduled);
+    
+                if (sessionsScheduled == pairSessions) {
                     return true;
-                }else{
+                } else {
                     System.out.println("pair false");
                 }
             }
@@ -193,15 +198,19 @@ public class courseScheduler {
         return false;
     }
     
+    
 
     private boolean attemptEqualSpreadSchedule(UUID courseId) {
+        
         int sessionsPerDay = courseMap.get(courseId).numberOfSessions / courseMap.get(courseId).instructorDays.size();
         System.out.println("sessions per day " + sessionsPerDay);
         int sessionsScheduled = 0;
 
 
-        for (int dayIndex: courseMap.get(courseId).instructorDays) {
-            for (int i = courseMap.get(courseId).TimeSlotIndexstart; i < courseMap.get(courseId).TimeSlotIndexEnd && sessionsScheduled < sessionsPerDay; i++) {
+        
+
+        for (int i = courseMap.get(courseId).TimeSlotIndexstart; i < courseMap.get(courseId).TimeSlotIndexEnd && sessionsScheduled <= sessionsPerDay; i++) {
+            for (int dayIndex: courseMap.get(courseId).instructorDays) {
                 if (isSlotAvailable(courseId, dayIndex, i)) {
                     if (courseMap.get(courseId).nbOfSlots > 1 && areSlotsAvailable(courseId, dayIndex, i, i + courseMap.get(courseId).nbOfSlots - 1)) {
                         scheduleCourseInSlots(courseId, dayIndex, i, i + courseMap.get(courseId).nbOfSlots - 1);
