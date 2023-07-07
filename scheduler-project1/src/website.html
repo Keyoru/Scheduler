@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Excel Import</title>
+    <style>
+        /* Center-align the button */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Style the container */
+        .container {
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        /* Style the heading */
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #333333;
+        }
+
+        /* Style the button */
+        .btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        /* Hide the file input */
+        .file-input {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Add the import button -->
+        <button class="btn" onclick="importFile()">Import File</button>
+
+        <!-- Add the file input element -->
+        <input class="file-input" type="file" accept=".xlsx, .xls" onchange="handleFile(this.files[0])">
+    </div>
+
+    <script>
+        function importFile() {
+            // Trigger the file input element when the button is clicked
+            document.querySelector('.file-input').click();
+        }
+
+        function handleFile(file) {
+            // Perform actions with the selected file
+            console.log('Selected file:', file);
+            // You can use libraries like XLSX.js or Papa Parse to handle the file data
+        }
+    </script>
+</body>
+</html>
