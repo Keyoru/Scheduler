@@ -70,7 +70,6 @@ public class courseScheduler {
 
     public void ScheduleCourses() {
         Set<UUID> courseIds = new HashSet<>(courseMap.keySet()); // without it this doesnt work idk why
-    
         for (UUID courseId : courseIds) {
             addCourse(courseId);
         }
@@ -152,7 +151,7 @@ public class courseScheduler {
         }
     }
 
-    
+
     private boolean attemptDayPairSchedule(UUID courseId) {
         course course = courseMap.get(courseId);
     

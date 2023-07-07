@@ -8,7 +8,7 @@ public class App {
                 
                 courseScheduler scheduler = new courseScheduler();
 
-                LinkedList<Integer> instructorDays1 = new LinkedList<>(List.of(0, 2)); // Monday, Wednesday
+                LinkedList<Integer> instructorDays1 = new LinkedList<>(List.of(0, 1)); // Monday, Wednesday
                 LinkedList<String> conflictingCourses1 = new LinkedList<>(List.of("MTH202"));
                 course course1 = new course("CSE101", "Course 1", 3, 1, 2,
                         "John Doe", instructorDays1, 0, 6, conflictingCourses1,
@@ -149,7 +149,7 @@ public class App {
                 scheduler.courseMap.put(UUID.randomUUID(), course18);
                 scheduler.courseMap.put(UUID.randomUUID(), course19);
                 scheduler.courseMap.put(UUID.randomUUID(), course20);
-//
+
                 
             scheduler.ScheduleCourses();
 
