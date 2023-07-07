@@ -8,16 +8,16 @@ public class App {
 
             courseScheduler scheduler = new courseScheduler();
 
-            LinkedList<Integer> instructorDays1 = new LinkedList<>(List.of(1, 2)); // Monday, Wednesday
+            LinkedList<Integer> instructorDays1 = new LinkedList<>(List.of(0, 2)); // Monday, Wednesday
             LinkedList<String> conflictingCourses1 = new LinkedList<>(List.of("MTH202"));
             course course1 = new course("CSE101", "Course 1", 3, 1, 4,
-                    "John Doe", instructorDays1, 0, 2, conflictingCourses1,
+                    "John Doe", instructorDays1, 1, 4, conflictingCourses1,
                     "Type 1", 1);
     
-            LinkedList<Integer> instructorDays2 = new LinkedList<>(List.of(1, 3)); // Tuesday, Thursday
+            LinkedList<Integer> instructorDays2 = new LinkedList<>(List.of(0, 2)); // Monday, Wednesday
             LinkedList<String> conflictingCourses2 = new LinkedList<>(List.of("CSE101"));
             course course2 = new course("MTH202", "Course 2", 4, 1, 2,
-                    "Jane Smith", instructorDays2, 2, 4, conflictingCourses2,
+                    "Jane Smith", instructorDays2, 1, 4, conflictingCourses2,
                     "Type 2", 1);
     
             LinkedList<Integer> instructorDays3 = new LinkedList<>(List.of(4)); // Friday
@@ -38,18 +38,18 @@ public class App {
                     "Emily Davis", instructorDays5, 2, 4, conflictingCourses5,
                     "Type 5", 1);
     
-            LinkedList<Integer> instructorDays6 = new LinkedList<>(List.of(1, 3)); // Tuesday, Thursday
+            LinkedList<Integer> instructorDays6 = new LinkedList<>(List.of(1, 2, 3)); // Tuesday, Thursday
             LinkedList<String> conflictingCourses6 = new LinkedList<>(List.of("CSE101", "PHY201"));
             course course6 = new course("ENG202", "Course 6", 3, 1, 2,
                     "David Wilson", instructorDays6, 1, 6, conflictingCourses6,
                     "Type 6", 4);
             
             scheduler.courseMap.put(UUID.randomUUID(), course1);
-            //scheduler.courseMap.put(UUID.randomUUID(), course2);
-            //scheduler.courseMap.put(UUID.randomUUID(), course3);
-            //scheduler.courseMap.put(UUID.randomUUID(), course4);
-            //scheduler.courseMap.put(UUID.randomUUID(), course5);
-            //scheduler.courseMap.put(UUID.randomUUID(), course6);
+            scheduler.courseMap.put(UUID.randomUUID(), course2);
+            scheduler.courseMap.put(UUID.randomUUID(), course3);
+            scheduler.courseMap.put(UUID.randomUUID(), course4);
+            scheduler.courseMap.put(UUID.randomUUID(), course5);
+            scheduler.courseMap.put(UUID.randomUUID(), course6);
                 
             scheduler.ScheduleCourses();
 

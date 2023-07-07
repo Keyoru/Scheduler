@@ -129,9 +129,7 @@ public class courseScheduler {
 
                 // Course couldn't be scheduled
                 unscheduledCourseHeap.add(courseMap.get(courseId));
-            }
-            courseMap.remove(courseId);
-
+            }    
         }else{
             printWriter.println("Adding course " + courseMap.get(courseId).courseID);
 
@@ -149,6 +147,8 @@ public class courseScheduler {
                 System.out.println("any true");
                 return;
             }
+
+            unscheduledCourseHeap.add(courseMap.get(courseId)); 
         }
     }
 
@@ -164,7 +164,7 @@ public class courseScheduler {
                 int dayIndex2 = dayPair.get(1);
                 int timeSlotIndex = course.TimeSlotIndexstart;
     
-                while (sessionsScheduled < pairSessions) {
+                while (sessionsScheduled < pairSessions && timeSlotIndex < course.TimeSlotIndexEnd){
                     if (isSlotAvailable(courseId, dayIndex1, timeSlotIndex) &&
                         isSlotAvailable(courseId, dayIndex2, timeSlotIndex)) {
                         if (course.nbOfSlots > 1 &&
@@ -270,7 +270,7 @@ public class courseScheduler {
     }
     
     private void scheduleCourseInSlots(UUID courseId, int dayIndex, int SlotIndexStart, int slotIndexEnd){
-        for(int i = SlotIndexStart; i <= slotIndexEnd; i++){
+        for(int i = SlotIndexStart; i < slotIndexEnd; i++){
             printWriter.println("added course to day: " + dayIndex + " time slot: "+ i);
             schedule[dayIndex][i].add(courseId);
         };
@@ -281,12 +281,10 @@ public class courseScheduler {
 
     //checks for conflicts in given slot
     private boolean isSlotAvailable(UUID courseId, int dayIndex, int slotIndex) {
-        
         for (String conflict : courseMap.get(courseId).conflictingCourses) {
-    
             for (UUID scheduledCourseUUID : schedule[dayIndex][slotIndex]) {
 
-                String scheduledCourseid = courseMap.get(scheduledCourseUUID).toString();
+                String scheduledCourseid = courseMap.get(scheduledCourseUUID).courseID;
                 // parsing to get rid of -i of different sections
                 // for example instead of comparing PHYS201-2 (present in slot) which isnt present in the course.conflictingCourses
                 // we compare PHYS201
@@ -302,13 +300,15 @@ public class courseScheduler {
     }
 
     // checks for conflicts in several slots in a row, used for courses with longer than 1 slot lecture time
-    private boolean areSlotsAvailable(UUID courseId, int dayIndex, int slotIndexStart, int slotIndexEnd){
-
-        for(int i = slotIndexStart; i <= slotIndexEnd;i++){
-            return isSlotAvailable(courseId, dayIndex, i);
+    private boolean areSlotsAvailable(UUID courseId, int dayIndex, int slotIndexStart, int slotIndexEnd) {
+        for (int i = slotIndexStart; i < slotIndexEnd; i++) {
+            if (!isSlotAvailable(courseId, dayIndex, i)) {
+                return false;
+            }
         }
         return true;
     }
+    
 
 
     private static boolean canWorkWith(List<Integer> daypair, List<Integer> instructorDays) {
@@ -337,10 +337,10 @@ public class courseScheduler {
             System.out.println();
         }
 
-        //System.out.println("\nUnscheduled courses remaining: ");
-        //for(course c: unscheduledCourseHeap){
-        //    System.out.println(c.courseID);
-        //}
+        System.out.println("\nUnscheduled courses remaining: ");
+        for(course c: unscheduledCourseHeap){
+            System.out.println(c.courseID);
+        }
     }
 
 }
