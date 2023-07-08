@@ -152,6 +152,8 @@ public class courseScheduler {
     }
 
 
+
+    // TODO different lectures on different day pairs or times if possible
     private boolean attemptDayPairSchedule(UUID courseId) {
         course course = courseMap.get(courseId);
     
@@ -204,17 +206,11 @@ public class courseScheduler {
     }
     
     
-    
-    
-
     private boolean attemptEqualSpreadSchedule(UUID courseId) {
         
         int sessionsPerDay = courseMap.get(courseId).numberOfSessions / courseMap.get(courseId).instructorDays.size();
         System.out.println("sessions per day " + sessionsPerDay);
         int sessionsScheduled = 0;
-
-
-        
 
         for (int i = courseMap.get(courseId).TimeSlotIndexstart; i < courseMap.get(courseId).TimeSlotIndexEnd && sessionsScheduled <= sessionsPerDay; i++) {
             for (int dayIndex: courseMap.get(courseId).instructorDays) {
@@ -240,6 +236,7 @@ public class courseScheduler {
 
         return false;
     }
+
 
     private boolean attemptAnySchedule(UUID courseId) {
         int sessionsScheduled = 0;
@@ -288,7 +285,6 @@ public class courseScheduler {
     }
 
 
-
     //checks for conflicts in given slot
     private boolean isSlotAvailable(UUID courseId, int dayIndex, int slotIndex) {
         for (String conflict : courseMap.get(courseId).conflictingCourses) {
@@ -317,8 +313,7 @@ public class courseScheduler {
             }
         }
         return true;
-    }
-    
+    }    
 
 
     private static boolean canWorkWith(List<Integer> daypair, List<Integer> instructorDays) {
@@ -331,8 +326,6 @@ public class courseScheduler {
         System.out.println("true");
         return true; // All working days are present in the pair
     }
-
-
 
 
     public void displaySchedule(){
