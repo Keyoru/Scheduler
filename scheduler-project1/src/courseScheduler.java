@@ -303,7 +303,7 @@ private boolean attemptEqualSpreadSchedule(UUID courseId) {
                         break;
                     }
                     if (courseMap.get(courseId).nbOfSlots > 1 && areSlotsAvailable(courseId, dayIndex, i, i + courseMap.get(courseId).nbOfSlots - 1)) {
-                        scheduleCourseInSlots(courseId, dayIndex, i, i + courseMap.get(courseId).nbOfSlots - 1);
+                        scheduleCourseInSlots(courseId, dayIndex, i, i + courseMap.get(courseId).nbOfSlots -1);
                         courseMap.get(courseId).sessionsScheduled++;
                     } else if (courseMap.get(courseId).nbOfSlots == 1) {
                         scheduleCourseInSlot(courseId, dayIndex, i);
@@ -339,7 +339,7 @@ private boolean attemptEqualSpreadSchedule(UUID courseId) {
             return;
         }
         for(int i = SlotIndexStart; i <= slotIndexEnd; i++){
-            printWriter.println("added course to day: " + dayIndex + " time slot: "+ i);
+            System.out.println("added course to day: " + dayIndex + " time slot: "+ i);
             schedule[dayIndex][i].add(courseId);
             courseMap.get(courseId).sessionsScheduled++;
         };
@@ -347,15 +347,15 @@ private boolean attemptEqualSpreadSchedule(UUID courseId) {
     }
 
 
-    //checks for conflicts in given slot
     private boolean isSlotAvailable(UUID courseId, int dayIndex, int slotIndex) {
         for (String conflict : courseMap.get(courseId).conflictingCourses) {
             for (UUID scheduledCourseUUID : schedule[dayIndex][slotIndex]) {
+
                 
-                if(courseMap.get(scheduledCourseUUID).instructorName.equals(courseMap.get(courseId).instructorName)){
+                if (courseMap.get(scheduledCourseUUID).instructorName.equals(courseMap.get(courseId).instructorName)) {
                     return false;
                 }
-
+    
                 String scheduledCourseid = courseMap.get(scheduledCourseUUID).courseID;
                 // parsing to get rid of -i of different sections
                 // for example instead of comparing PHYS201-2 (present in slot) which isnt present in the course.conflictingCourses
@@ -366,30 +366,35 @@ private boolean attemptEqualSpreadSchedule(UUID courseId) {
                     return false;
                 }
             }
-    
         }
+        System.out.println("slot av true");
         return true;
     }
-
+    
     // checks for conflicts in several slots in a row, used for courses with longer than 1 slot lecture time
     private boolean areSlotsAvailable(UUID courseId, int dayIndex, int slotIndexStart, int slotIndexEnd) {
-        for (int i = slotIndexStart; i < slotIndexEnd; i++) {
+        
+        if(slotIndexEnd >= courseMap.get(courseId).TimeSlotIndexEnd){
+            return false;
+        }
+    
+        for (int i = slotIndexStart; i <= slotIndexEnd; i++) {
             if (!isSlotAvailable(courseId, dayIndex, i)) {
                 return false;
             }
         }
         return true;
-    }    
+    }
+    
+    
 
 
     private static boolean canWorkWith(List<Integer> daypair, List<Integer> instructorDays) {
         for (int day : daypair) {
             if (!instructorDays.contains(day)) {
-                System.out.println("false");
                 return false; // The pair does not contain one of the working days
             }
         }
-        System.out.println("true");
         return true; // All working days are present in the pair
     }
 

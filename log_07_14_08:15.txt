@@ -1,8 +1,0 @@
-added course to day: 0 time slot: 0
-added course to day: 0 time slot: 1
-added course to day: 0 time slot: 2
-added course to day: 0 time slot: 3
-added course to day: 0 time slot: 0
-added course to day: 0 time slot: 1
-added course to day: 1 time slot: 0
-added course to day: 1 time slot: 1
