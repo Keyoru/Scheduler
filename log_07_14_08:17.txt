@@ -1,0 +1,3 @@
+Adding course CSE101
+added course to day: 0 time slot: 0
+added course to day: 0 time slot: 1

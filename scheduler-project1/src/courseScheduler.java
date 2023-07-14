@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import java.time.LocalTime;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -107,24 +106,26 @@ public class courseScheduler {
                courseMap.get(courseId).instructorDays,courseMap.get(courseId).TimeSlotIndexstart, courseMap.get(courseId).TimeSlotIndexEnd,courseMap.get(courseId).conflictingCourses,
                courseMap.get(courseId).courseType,courseMap.get(courseId).nbOfSlots);
 
+               System.out.println(currentSection.courseID);
                 
                 UUID courseSectionId = UUID.randomUUID();
                 courseMap.put(courseSectionId, currentSection);
-                
+                boolean iscourseScheduled = false;
                 if (attemptDayPairSchedule(courseSectionId)) {
-                    System.out.println("pairs");
-                    return;
+                    System.out.println("pairs true");
+                    continue;
                 }
-    
+                
                 if (attemptEqualSpreadSchedule(courseSectionId)) {
-                    System.out.println("equal spread");
-                    return;
+                    System.out.println("equal spread true");
+                    continue;
                 }
-            
+                
                 if (attemptAnySchedule(courseSectionId)) {
-                    System.out.println("any");
-                    return;
+                    System.out.println("any true");
+                    continue;
                 }
+                
 
                 // Course couldn't be scheduled
                 unscheduledCourseHeap.add(courseMap.get(courseId));
@@ -132,7 +133,7 @@ public class courseScheduler {
         }else{
             printWriter.println("Adding course " + courseMap.get(courseId).courseID);
 
-            if (attemptDayPairSchedule(courseId)) {
+            if (attemptDayPairSchedule(courseId) && !(courseMap.get(courseId).numberOfSessions < courseMap.get(courseId).instructorDays.size())) {
                 System.out.println("pairs true");
                 return;
             }
@@ -153,111 +154,169 @@ public class courseScheduler {
 
 
 
-    // TODO different lectures on different day pairs or times if possible
-    private boolean attemptDayPairSchedule(UUID courseId) {
-        course course = courseMap.get(courseId);
-    
-        for (List<Integer> dayPair : dayPairs) {
-            if (canWorkWith(dayPair, courseMap.get(courseId).instructorDays)) {
-                int pairSessions = course.numberOfSessions / 2;
-                int sessionsScheduled = 0;
-    
-                int dayIndex1 = dayPair.get(0);
-                int dayIndex2 = dayPair.get(1);
-                int timeSlotIndex = course.TimeSlotIndexstart;
-    
-                while (sessionsScheduled < pairSessions && timeSlotIndex <= course.TimeSlotIndexEnd - course.nbOfSlots) {
-                    boolean canSchedule = true;
-    
-                    for (int session = 0; session < course.nbOfSlots && sessionsScheduled < pairSessions; session++) {
-                        for (int slot = 0; slot < course.nbOfSlots; slot++) {
-                            if (!isSlotAvailable(courseId, dayIndex1, timeSlotIndex + slot) ||
-                                    !isSlotAvailable(courseId, dayIndex2, timeSlotIndex + slot)) {
-                                canSchedule = false;
-                                break;
-                            }
-                        }
-    
-                        if (canSchedule) {
-                            for (int slot = 0; slot < course.nbOfSlots; slot++) {
-                                scheduleCourseInSlot(courseId, dayIndex1, timeSlotIndex + slot);
-                                scheduleCourseInSlot(courseId, dayIndex2, timeSlotIndex + slot);
-                            }
-                            sessionsScheduled++;
-                        } else {
+// TODO different lectures on different day pairs or times if possible
+private boolean attemptDayPairSchedule(UUID courseId) {
+    System.out.println("attempt day pair");
+    course course = courseMap.get(courseId);
+
+    for (List<Integer> dayPair : dayPairs) {
+        if (canWorkWith(dayPair, courseMap.get(courseId).instructorDays)) {
+            int pairSessions = course.numberOfSessions / 2;
+
+
+            int dayIndex1 = dayPair.get(0);
+            int dayIndex2 = dayPair.get(1);
+            int timeSlotIndex = course.TimeSlotIndexstart;
+
+            while (courseMap.get(courseId).sessionsScheduled < pairSessions && timeSlotIndex <= course.TimeSlotIndexEnd - course.nbOfSlots) {
+                boolean canSchedule = true;
+
+                for (int session = 0; session < course.nbOfSlots && courseMap.get(courseId).sessionsScheduled < pairSessions; session++) {
+                    for (int slot = 0; slot < course.nbOfSlots; slot++) {
+                        if (!isSlotAvailable(courseId, dayIndex1, timeSlotIndex + slot) ||
+                                !isSlotAvailable(courseId, dayIndex2, timeSlotIndex + slot)) {
+                            canSchedule = false;
                             break;
                         }
                     }
-    
-                    timeSlotIndex++;
+
+                    if (canSchedule) {
+                        for (int slot = 0; slot < course.nbOfSlots; slot++) {
+                            scheduleCourseInSlot(courseId, dayIndex1, timeSlotIndex + slot);
+                            scheduleCourseInSlot(courseId, dayIndex2, timeSlotIndex + slot);
+                        }
+                    } else {
+                        break;
+                    }
                 }
-    
-                System.out.println(sessionsScheduled);
-    
-                if (sessionsScheduled >= pairSessions) {
-                    return true;
-                } else {
-                    System.out.println("pair false");
-                }
+
+                timeSlotIndex++;
+            }
+            System.out.println(courseMap.get(courseId).sessionsScheduled);
+            System.out.println(courseMap.get(courseId).numberOfSessions);
+            if (courseMap.get(courseId).sessionsScheduled >= courseMap.get(courseId).numberOfSessions) {
+                return true;
+            } else {
+                System.out.println("pair false");
             }
         }
-    
-        return false;
     }
-    
-    
-    private boolean attemptEqualSpreadSchedule(UUID courseId) {
-        
-        int sessionsPerDay = courseMap.get(courseId).numberOfSessions / courseMap.get(courseId).instructorDays.size();
-        System.out.println("sessions per day " + sessionsPerDay);
-        int sessionsScheduled = 0;
 
-        for (int i = courseMap.get(courseId).TimeSlotIndexstart; i < courseMap.get(courseId).TimeSlotIndexEnd && sessionsScheduled <= sessionsPerDay; i++) {
-            for (int dayIndex: courseMap.get(courseId).instructorDays) {
+    return false;
+}
+    
+    
+    
+    
+private boolean attemptEqualSpreadSchedule(UUID courseId) {
+        
+    //  TODO:   case of < 1
+    //           day pairs: MON-WED   T-TH 
+
+    printWriter.println("adding course " + courseMap.get(courseId).courseID + "\nStart timeslot Index = " + courseMap.get(courseId).TimeSlotIndexstart + "\nEnd timeslot Index = " + courseMap.get(courseId).TimeSlotIndexEnd + "\nDays" + courseMap.get(courseId).instructorDays.toString());
+        
+    for(int dayIndex: courseMap.get(courseId).instructorDays){
+            
+            int sessionsPerDay = courseMap.get(courseId).numberOfSessions / courseMap.get(courseId).instructorDays.size();
+            int sessionsScheduled = 0;
+        
+            for(int i = courseMap.get(courseId).TimeSlotIndexstart; i < courseMap.get(courseId).TimeSlotIndexEnd && sessionsScheduled < sessionsPerDay; i++){
                 if (isSlotAvailable(courseId, dayIndex, i)) {
-                    if (courseMap.get(courseId).nbOfSlots > 1 && areSlotsAvailable(courseId, dayIndex, i, i + courseMap.get(courseId).nbOfSlots - 1)) {
-                        scheduleCourseInSlots(courseId, dayIndex, i, i + courseMap.get(courseId).nbOfSlots - 1);
-                        sessionsScheduled++;
-                    } else if (courseMap.get(courseId).nbOfSlots == 1) {
+                    if (courseMap.get(courseId).nbOfSlots > 1) { // case 1, each course lecture takes more than 1 slot of time
+                        if (areSlotsAvailable(courseId,dayIndex, i,  i + courseMap.get(courseId).nbOfSlots - 1)) {
+                            scheduleCourseInSlots(courseId, dayIndex, i, i + courseMap.get(courseId).nbOfSlots - 1);
+                            sessionsScheduled++;
+                        }
+                    } else { // case 2 each course lecture is just 1 slot
                         scheduleCourseInSlot(courseId, dayIndex, i);
                         sessionsScheduled++;
                     }
                 }
             }
         }
-
-        System.out.println(sessionsScheduled);
-
-        if (sessionsScheduled == courseMap.get(courseId).numberOfSessions) {
+        
+        printWriter.println("\n");
+        printWriter.flush();    
+        if (courseMap.get(courseId).sessionsScheduled >= courseMap.get(courseId).numberOfSessions) {
             return true;
-        }else{
+        } else {
             System.out.println("equal spread false");
+            return false;
         }
-
-        return false;
     }
+
+
+//    private boolean attemptEqualSpreadSchedule(UUID courseId) {
+//        System.out.println("attempt equal");
+//        int sessionsPerDay = courseMap.get(courseId).numberOfSessions / courseMap.get(courseId).instructorDays.size();
+//    
+//        // Calculate the effective number of days for scheduling
+//        int effectiveDays = Math.min(courseMap.get(courseId).instructorDays.size(), courseMap.get(courseId).numberOfSessions);
+//        
+//        
+//        int dayIndex = 0;
+//        int timeSlotIndex = courseMap.get(courseId).TimeSlotIndexstart;
+//    
+//        while (courseMap.get(courseId).sessionsScheduled <= courseMap.get(courseId).numberOfSessions) {
+//            System.out.println(courseMap.get(courseId).sessionsScheduled);
+//            if (dayIndex >= effectiveDays) {
+//                dayIndex = 0;
+//                timeSlotIndex++;
+//            }
+//    
+//            if (timeSlotIndex >= courseMap.get(courseId).TimeSlotIndexEnd)
+//                break;
+//    
+//            if (isSlotAvailable(courseId, courseMap.get(courseId).instructorDays.get(dayIndex), timeSlotIndex)) {
+//                if (courseMap.get(courseId).sessionsScheduled >= courseMap.get(courseId).numberOfSessions) {
+//                    break;
+//                }
+//                if (courseMap.get(courseId).nbOfSlots > 1 && areSlotsAvailable(courseId, courseMap.get(courseId).instructorDays.get(dayIndex), timeSlotIndex, timeSlotIndex + courseMap.get(courseId).nbOfSlots - 1)) {
+//                    scheduleCourseInSlots(courseId, courseMap.get(courseId).instructorDays.get(dayIndex), timeSlotIndex, timeSlotIndex + courseMap.get(courseId).nbOfSlots - 1);
+//                } else if (courseMap.get(courseId).nbOfSlots == 1) {
+//                    scheduleCourseInSlot(courseId, courseMap.get(courseId).instructorDays.get(dayIndex), timeSlotIndex);       
+//                }
+//                
+//            }
+//    
+//            dayIndex++;
+//        }
+//    
+//        if (courseMap.get(courseId).sessionsScheduled >= courseMap.get(courseId).numberOfSessions) {
+//            return true;
+//        } else {
+//            System.out.println("equal spread false");
+//            return false;
+//        }
+//    }
+    
+    
 
 
     private boolean attemptAnySchedule(UUID courseId) {
-        int sessionsScheduled = 0;
+
     
         for (int dayIndex: courseMap.get(courseId).instructorDays) {
-            for (int i = courseMap.get(courseId).TimeSlotIndexstart; i < courseMap.get(courseId).TimeSlotIndexEnd && sessionsScheduled < courseMap.get(courseId).numberOfSessions; i++) {
+            for (int i = courseMap.get(courseId).TimeSlotIndexstart; i < courseMap.get(courseId).TimeSlotIndexEnd && courseMap.get(courseId).sessionsScheduled < courseMap.get(courseId).numberOfSessions; i++) {
                 if (isSlotAvailable(courseId, dayIndex, i)) {
+                    if (courseMap.get(courseId).sessionsScheduled >= courseMap.get(courseId).numberOfSessions) {
+                        break;
+                    }
                     if (courseMap.get(courseId).nbOfSlots > 1 && areSlotsAvailable(courseId, dayIndex, i, i + courseMap.get(courseId).nbOfSlots - 1)) {
                         scheduleCourseInSlots(courseId, dayIndex, i, i + courseMap.get(courseId).nbOfSlots - 1);
-                        sessionsScheduled++;
+                        courseMap.get(courseId).sessionsScheduled++;
                     } else if (courseMap.get(courseId).nbOfSlots == 1) {
                         scheduleCourseInSlot(courseId, dayIndex, i);
-                        sessionsScheduled++;
+                        courseMap.get(courseId).sessionsScheduled++;
                     }
+                    
                 }
             }
         }
 
-        System.out.println(sessionsScheduled);
+        System.out.println(courseMap.get(courseId).sessionsScheduled);
     
-        if (sessionsScheduled == courseMap.get(courseId).numberOfSessions) {
+        if (courseMap.get(courseId).sessionsScheduled >= courseMap.get(courseId).numberOfSessions) {
             return true;
         }else{
             System.out.println("any false");
@@ -269,6 +328,8 @@ public class courseScheduler {
 
     private void scheduleCourseInSlot(UUID courseId, int dayIndex, int slotIndex){
         System.out.println("added course to day: " + dayIndex + " time slot: "+ slotIndex);
+        courseMap.get(courseId).sessionsScheduled ++;
+        System.out.println("scheduled sessions: " + courseMap.get(courseId).sessionsScheduled);
         schedule[dayIndex][slotIndex].add(courseId);
         printWriter.flush();
     }
@@ -280,6 +341,7 @@ public class courseScheduler {
         for(int i = SlotIndexStart; i <= slotIndexEnd; i++){
             printWriter.println("added course to day: " + dayIndex + " time slot: "+ i);
             schedule[dayIndex][i].add(courseId);
+            courseMap.get(courseId).sessionsScheduled++;
         };
         printWriter.flush();
     }
@@ -289,6 +351,10 @@ public class courseScheduler {
     private boolean isSlotAvailable(UUID courseId, int dayIndex, int slotIndex) {
         for (String conflict : courseMap.get(courseId).conflictingCourses) {
             for (UUID scheduledCourseUUID : schedule[dayIndex][slotIndex]) {
+                
+                if(courseMap.get(scheduledCourseUUID).instructorName.equals(courseMap.get(courseId).instructorName)){
+                    return false;
+                }
 
                 String scheduledCourseid = courseMap.get(scheduledCourseUUID).courseID;
                 // parsing to get rid of -i of different sections
@@ -317,8 +383,8 @@ public class courseScheduler {
 
 
     private static boolean canWorkWith(List<Integer> daypair, List<Integer> instructorDays) {
-        for (int day : instructorDays) {
-            if (!daypair.contains(day)) {
+        for (int day : daypair) {
+            if (!instructorDays.contains(day)) {
                 System.out.println("false");
                 return false; // The pair does not contain one of the working days
             }

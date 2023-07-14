@@ -1,0 +1,31 @@
+Adding course CSE101
+adding course CSE101
+Start timeslot Index = 0
+End timeslot Index = 6
+Days[0, 1]
+added course to day: 0 time slot: 0
+added course to day: 0 time slot: 1
+added course to day: 1 time slot: 0
+added course to day: 1 time slot: 1
+
+
+adding course CSE101-1
+Start timeslot Index = 0
+End timeslot Index = 6
+Days[0, 1]
+added course to day: 0 time slot: 0
+added course to day: 0 time slot: 1
+added course to day: 1 time slot: 0
+added course to day: 1 time slot: 1
+
+
+adding course CSE101-2
+Start timeslot Index = 0
+End timeslot Index = 6
+Days[0, 1]
+added course to day: 0 time slot: 2
+added course to day: 0 time slot: 3
+added course to day: 1 time slot: 2
+added course to day: 1 time slot: 3
+
+

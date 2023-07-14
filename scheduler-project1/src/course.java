@@ -19,6 +19,7 @@ public class course {
     String courseType;
     int nbOfSlots;   //number of slots a single lecture takes
                      //if course lecture length is 1:15 then 1 slot, 2 hours length is 2 slots etc etc
+   int sessionsScheduled;
 
     course(String ID, String name, int creds, int sections, int sessions, String instname,
      LinkedList<Integer> instdays, int index1, int index2, LinkedList<String> conflicts
@@ -35,5 +36,6 @@ public class course {
         conflictingCourses = conflicts;
         courseType = Type;
         nbOfSlots = Slots;
+        sessionsScheduled = 0;
      }
 }
