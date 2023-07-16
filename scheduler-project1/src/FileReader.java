@@ -25,89 +25,53 @@ public class FileReader {
         Workbook workbook = new XSSFWorkbook(fis);
 
         // Get the specific sheet by name
-        Sheet sheet = workbook.getSheet(sheetName);
+        Sheet sheet1 = workbook.getSheetAt(0);
+        Sheet sheet2 = workbook.getSheetAt(1);
 
-        if (sheet != null) {
-            // Iterate over rows
-            for (Row row : sheet) {
-                String course_id = "";
-                String course_name = "";
-                String num_credits = "";
-                String num_sessions = "";
-                String num_sections = "";
-                String time_slot = "";
-                String instructor_name = "";
-                String instructor_hours = "";
-                String course_type = "";
-                String num_of_slots = "";
-                LinkedList<String>conflicting_courses;
-                String instructors_day;
+        if (sheet1 != null && sheet2 != null) {
+            // Iterate over rows in both sheets simultaneously
+            int numRows = Math.max(sheet1.getLastRowNum() + 1, sheet2.getLastRowNum() + 1);
+            for (int rowNum = 1; rowNum < numRows; rowNum++) { // Start from 1 to skip the header row
+                Row row1 = sheet1.getRow(rowNum);
+                Row row2 = sheet2.getRow(rowNum);
 
-                // Iterate over cells in the row
-                for (Cell cell : row) {
-                    int columnIndex = cell.getColumnIndex();
-                    switch (columnIndex) {
-                        case 0:
-                            course_id = cell.getStringCellValue();
-                            break;
-                        case 1:
-                            course_name = cell.getStringCellValue();
-                            break;
-                        case 4:
-                            num_credits = cell.getStringCellValue();
-                            break;
-                        case 5:
-                            num_sessions = cell.getStringCellValue();
-                            break;  
-                        case 6:
-                            time_slot = cell.getStringCellValue();
-                            break; 
-                        case 7:
-                            num_sessions = cell.getStringCellValue();
-                            break; 
-                        case 8:
-                            instructor_name = cell.getStringCellValue();
-                            break;  
-                        case 9:
-                            instructor_hours = cell.getStringCellValue();
-                            break; 
-                        case 10:
-                            course_type = cell.getStringCellValue();
-                            break;     
-                        case 11:
-                            num_of_slots = cell.getStringCellValue();
-                            break;      
-                        case 12:
-                            conflicting_courses = new LinkedList<String>();
-                            conflicting_courses = cell.getStringCellValue();
-                            break; 
-                        case 13:
-                            instructors_day = cell.getStringCellValue();
-                            break;                                         
-                    }
-                }
+                if (row1 != null && row2 != null) {
+                    // Read data from the rows and create Course object
+                    String course_id = row1.getCell(0).getStringCellValue();
+                    String course_name = row1.getCell(1).getStringCellValue();
+                    String num_credits = row1.getCell(2).getStringCellValue();
+                    String num_sections = row1.getCell(3).getStringCellValue();
+                    String num_sessions = row1.getCell(4).getStringCellValue();
+                    String instructor_name = row1.getCell(5).getStringCellValue();
+                    LinkedList<Integer> instructor_days = new LinkedList<Integer>();
+                    instructor_days = getDayIndex(row1.getCell(6).getStringCellValue());
 
-               LinkedList<String>Split_Days = Split_Days(instructors_day);
-               LinkedList<Integer>instructor_days = new LinkedList<Integer>();
+                    LinkedList<String> conflicting_courses = new LinkedList<String>();
+                    conflicting_courses = = row2.getCell(4).getStringCellValue();
+                    String course_type = row2.getCell(10).getStringCellValue();
+                    String num_of_slots = row2.getCell(11).getStringCellValue();
 
-               for(int i=0;i<Split_Days.size();i++){
-                   instructor_days.add(getDayIndex(Split_Days.get(i)));
-               }
+                    LinkedList<String>Split_Days = Split_Days(instructors_day);
+                    LinkedList<Integer>instructor_days = new LinkedList<Integer>();
+
+                    for(int i=0;i<Split_Days.size();i++){
+                       instructor_days.add(getDayIndex(Split_Days.get(i)));
+                   }
 
               
-              LinkedList<String> timeslots = convertHourstoSlots(instructor_hours);
-               int[] slots = getSlotsIndicies(timeslots.getFirst() , timeslots.getLast());
-               int index1 = slots[0];
-               int index2 = slots[1];
+                  LinkedList<String> timeslots = convertHourstoSlots(instructor_hours);
+                  int[] slots = getSlotsIndicies(timeslots.getFirst() , timeslots.getLast());
+                  int index1 = slots[0];
+                  int index2 = slots[1];
 
+                      Course course = new  Course(course_id, course_name, Integer.parseInt(num_credits),Integer.parseInt(num_sections),Integer.parseInt(num_sessions), instructor_name,
+                                instructor_days, index1, index2, conflicting_courses , course_type ,Integer.parseInt(num_of_slots));
 
-               Course course = new  Course(course_id, course_name, Integer.parseInt(num_credits),Integer.parseInt(num_sections),Integer.parseInt(num_sessions), instructor_name,
-                                instructor_days, index1, index2, conflicting_courses , course_type ,Integer.parseInt(num_of_slots) );
-
-            //    Course course = new Course(course_id, course_name, Integer.parseInt(num_credits),Integer.parseInt(num_sections),Integer.parseInt(num_sessions),instructor_name,
-             //                           instructors_day,instructor_hours,conflicting_courses,course_type, Integer.parseInt(num_of_slots));
-                Courses.put(UUID.randomUUID() , course);
+        
+                      Courses.put(UUID.randomUUID() , course);
+                }
             }
+         }
         } 
 
         workbook.close();
@@ -115,6 +79,21 @@ public class FileReader {
 
         return Courses;
     }
+
+    private boolean isFirstSheet(Sheet sheet) {
+     // Get the first row in the sheet
+      Row firstRow = sheet.getRow(0);
+       if (firstRow != null) {
+        // Iterate over cells in the first row
+           for (Cell cell : firstRow) {
+             // Check the header value of a specific column
+            if (cell.getColumnIndex() == 0 && cell.getStringCellValue().equalsIgnoreCase("course code")) {
+       return true;
+      }
+     }
+    }
+   return false;
+  }
 
      private int getDayIndex(String day) {
         switch (day) {
